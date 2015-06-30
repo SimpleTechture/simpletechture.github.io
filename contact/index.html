@@ -14,55 +14,24 @@ overview: true
                 <h3 class="section-title">Contact</h3>
             </header>
 
-              <div>
-                <input class="required" name="name" placeholder="NAAM" type="text">
-                </div><div>
-                <input class="required email" name="email" placeholder="EMAIL" type="text">                
-                </div>
-                <div>
-                  <input class="required" name="subject" placeholder="ONDERWERP" type="text">
-                </div>
-                <div>
-              <textarea class="required" name="message" placeholder="MESSAGE"></textarea>
-              </div>
-              <div><input class="button white" type="submit" value="VERZEND"></div>
-              </div>
-
+<form class="cd-form floating-labels" action="http://formspree.io/info@simpletechture.nl" method="POST">
+  <fieldset>
+ 
+    <div class="icon">
+      <label class="cd-label" for="cd-name">Email</label>
+      <input class="user" type="email" name="_replyto" id="cd-email" required>
+      </div> 
+ 
+    <div class="icon">
+      <label class="cd-label" for="cd-textarea">Message</label>
+        <textarea class="message" name="body" id="cd-textarea" required></textarea>
+    </div>
+ 
+    <div>
+          <input type="submit" value="Verstuur">
+      </div>
+  </fieldset>
+</form>
         </section>
 
 </article>
-<!--<div class="row">
-    <div class="medium-8 columns">
-      <div class="form">
-        <div class="row">
-          <form id="contact_form" method="POST" novalidate="novalidate">
-            <div class="large-12 columns">
-              <p id="thanks" style="display: none;">
-                Thanks for contacting us, we'll be in touch soon!
-              </p>
-            </div>
-            <div class="medium-12 columns">
-              <input class="required" name="name" placeholder="NAME" type="text">
-              <input class="required email" name="email" placeholder="EMAIL" type="text">
-              <input class="required" name="subject" placeholder="SUBJECT" type="text">
-              <textarea class="required" name="message" placeholder="MESSAGE"></textarea>
-              <input class="button white" type="submit">
-            </div>
-          </form>
-        </div>
-      </div>
-      <div class="two spacing"></div>
-    </div>
-    <div class="medium-4 columns">
-      <div class="contact-details">
-        <h4>Our location:</h4>
-        <p>41 Dean Street, London, UK</p>
-        <h4>Our Phone:</h4>
-        <p>+86 (03) 9810 4612</p>
-        <h4>Fax:</h4>
-        <p>+6102 236338 5456</p>
-        <h4>Our Email:</h4>
-        <p>info@wrap-team.com</p>
-      </div>
-    </div>
-  </div>-->
