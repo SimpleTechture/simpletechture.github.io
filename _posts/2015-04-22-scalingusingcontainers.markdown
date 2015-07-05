@@ -115,6 +115,7 @@ I tried to use fig together with nginx-proxy but when started using fig it seem 
 I have 3 bash script files
 
 For starting PostGreSQL
+
 ```
 #!/bin/bash
 sudo docker run --name postgres -e POSTGRES_PASSWORD=MySecretPwd -e POSTGRES_USER=ghostdb -v /home/kalkie/postgres:/var/lib/postgresql/data -d postgres
@@ -128,6 +129,7 @@ sudo docker run -e "VIRTUAL_HOST=www.simpletechture.com" -d -v /home/kalkie/ghos
 ```
 
 And finally one for nginx-proxy
+
 ```
 !/bin/bash
 docker run -d -p 80:80 -v /var/run/docker.sock:/tmp/docker.sock jwilder/nginx-proxy
