@@ -19,7 +19,7 @@ I will not create my own docker container with nginx but will reuse the containe
 First, I will set up the configuration using the official nginx docker image ```dockerfile/nginx``` but before I start that I need to change my [existing fig configuration](http://www.simpletechture.com/fiddling-with-fig/) to start another Ghost container. 
 
 
-```
+``` yaml
 ghost1:
   image: dockerfile/ghost
   links:
