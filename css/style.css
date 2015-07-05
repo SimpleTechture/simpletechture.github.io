@@ -633,7 +633,6 @@ Form
 .cd-form {
   width: 90%;
   max-width: 600px;
-  margin: 4em auto;
 }
 .cd-form::after {
   clear: both;
