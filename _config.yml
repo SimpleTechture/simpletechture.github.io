@@ -2,6 +2,10 @@ permalink: '/blog/:year/:title/'
 base: http://www.simpletechture.nl
 name: SimpleTechture
 author: Patrick Kalkman
-syntax-highlighting:
-  enabled : true
-  css: syntax.css
+
+markdown: redcarpet
+highlighter: pygments
+
+# The release of Jekyll Now that you're using
+version: v1.1.0
+
