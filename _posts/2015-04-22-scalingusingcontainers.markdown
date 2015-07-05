@@ -19,14 +19,13 @@ I will not create my own docker container with nginx but will reuse the containe
 First, I will set up the configuration using the official nginx docker image ```dockerfile/nginx``` but before I start that I need to change my [existing fig configuration](http://www.simpletechture.com/fiddling-with-fig/) to start another Ghost container. 
 
 
-{% highlight yaml %}
-
+```
 ghost1:
   image: dockerfile/ghost
   links:
    - postgres
   ports:
-   - "2368:2368"
+   - 2368:2368
   volumes:
    - /home/kalkie/ghostdata:/ghost-override
 
@@ -35,7 +34,7 @@ ghost2:
   links:
    - postgres
   ports:
-   - "2369:2368"
+   - 2369:2368
   volumes:
    - /home/kalkie/ghostdata:/ghost-override
 
@@ -46,7 +45,7 @@ postgres:
     POSTGRES_USER: ghostdb
   volumes:
    - /home/kalkie/postgres:/var/lib/postgresql/data
-{% endhighlight %}
+```
 
 As you can see, I have just added another ghost entry using almost the same parameters. The only difference is in the port mapping, we need to use different ports on the host side.
 
