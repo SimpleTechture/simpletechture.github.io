@@ -23,7 +23,8 @@ The most common way to log error events is writing these events in log files. Ea
 The ELK stack provides a solution for this problem by aggregating all of these log files into a single system. The ELK stack combines the Elasticsearch, Logstash and Kibana products. Elasticsearch is a search and analytics engine, Logstash is a tool for scrubbing and parsing log data into a single format and Kibana is a visualization engine to interact with Elasticsearch.
 
 ![ELK Stack Overview](../../../img/Figure2.png)
-Figure 2 ELK stack overview
+
+Figure 2. ELK stack overview
 
 The logs of a system are transported through and enhanced by Logstash. The data is then indexed and stored by Elasticsearch and finally visualized using the Kibana dashboard. All the components of the ELK stack are open source. Logstash is implemented using JRuby, Elasticsearch uses Java and Kibana is implemented using HTML, CSS and JavaScript. Although these three products work great together, they can also be used separately.
 
@@ -179,13 +180,12 @@ $ sudo cp kibana-3.1.2 /* /usr/share/nginx/html –R
 To validate if Kibana is working correctly we have to open two additional endpoints on the virtual machine running on Microsoft Azure. One endpoint for port 80 to be able to talk to the web server and another endpoint for port 9200 to let Kibana talk to Elasticsearch.
 
 ![Azure Endpoints](../../../img/Figure3.png)
-Figure 3 Azure Endpoints
+*Figure 3 Azure Endpoints*
 
 When you now browse to your webserver you should be welcomed by the Kibana start screen.
 
 ![Kibana Welcome Screen](../../../img/Figure4.png)
- 
-Figure 4 Kibana welcome screen
+*Figure 4 Kibana welcome screen*
 
 Congratulations, you have just installed all parts of the ELK stack. Next, we will look at configuring Logstash to get events into the system.
 
@@ -402,7 +402,7 @@ This concludes installing and configuring our ELK stack using a single server. T
 Sending events to Logstash
 We first have to send the events to Logstash before we can parse, index and search through them. There are several so called shippers which are responsible for transmitting events to Logstash.
 
-{<6>}![Shippers send events to Logstash](../../../img/Figure6-1.png)
+![Shippers send events to Logstash](../../../img/Figure6-1.png)
 
 Figure 6 Shippers move events to Logstash
 There are several shippers available that move events to Logstash. Logstash itself can also be used as a shipper. As Logstash runs with a footprint that is not friendly to under provisioned systems, several alternatives were created that have a smaller footprint, for example, the earlier mentioned Logstash-forwarder. Other alternatives are Beaver (written in Python) and Woodchuck (written in Ruby).
@@ -455,7 +455,7 @@ Before we can start the logstash-forwarder we have to create a configuration fil
 
 It specifies under network which certificate to use and to what server the logs should be sent The files parameter specifies which paths and pattern should be used to search the log files. Pay special interest to using the double backslash on Windows as a folder separator. Before starting the logstash forwarder I have to add another end point to my Azure virtual machine to let Logstash connect to port 6379.
 
-{<7>}![Lumberjack specific endpoints](../../../img/Figure7.png)
+![Lumberjack specific endpoints](../../../img/Figure7.png)
 Figure 7 Specific end point for Lumberjack
 
 The Logstash forwarder can now be started with the following command.
