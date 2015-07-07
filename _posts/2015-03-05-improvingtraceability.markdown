@@ -12,7 +12,7 @@ This post, is an article which I wrote for the SDN magazine. I decided to also p
 With all IT systems, traceability is an important non-functional requirement. If the traceability of a system is high, it is easier to find the root cause of a problem that occurs in a production environment. As a system gets distributed over multiple applications or services, tracing a problem in a production environment becomes more difficult. As there are simply more application and services to check. New architectures such as a microservices architecture makes this even more difficult because the functionality of the system can literally be distributed over dozens or hundreds of services. The services could be implemented using different development languages and be running on different platforms. This article describes a solution for increasing the traceability of a distributed system by using Log aggregation via the ELK stack.
 
 ![Micro Services Architecture](../../../img/Figure1.png)
-Figure 1 Microservices architecture
+**Figure 1. Microservices architecture**
 
 #### Tracing using the Elk stack
 
@@ -24,7 +24,7 @@ The ELK stack provides a solution for this problem by aggregating all of these l
 
 ![ELK Stack Overview](../../../img/Figure2.png)
 
-Figure 2. ELK stack overview
+**Figure 2. ELK stack overview**
 
 The logs of a system are transported through and enhanced by Logstash. The data is then indexed and stored by Elasticsearch and finally visualized using the Kibana dashboard. All the components of the ELK stack are open source. Logstash is implemented using JRuby, Elasticsearch uses Java and Kibana is implemented using HTML, CSS and JavaScript. Although these three products work great together, they can also be used separately.
 
@@ -38,19 +38,14 @@ The installation of all components is done through a remote shell, using putty a
 ######Installing Elasticsearch
 
 As Elasticsearch runs on top of Java, the first prerequisite we have to fulfill before we can install Elasticsearch is Java. We install Java by entering the following command on the command line.
-
 ```
 $ sudo apt-get install openjdk-7-jre-headless
 ```
-
 This will download and install Java version 1.7. To validate if Java was installed correctly we enter the following command.
-
 ```
 $ java –version
 ```
-
 If Java was installed correctly the following response will be generated (the version number may differ)
-
 ```
 java version "1.7.0_65"
 OpenJDK Runtime Environment (IcedTea 2.5.3) (7u71-2.5.3-0ubuntu0.14.04.1)
@@ -180,12 +175,12 @@ $ sudo cp kibana-3.1.2 /* /usr/share/nginx/html –R
 To validate if Kibana is working correctly we have to open two additional endpoints on the virtual machine running on Microsoft Azure. One endpoint for port 80 to be able to talk to the web server and another endpoint for port 9200 to let Kibana talk to Elasticsearch.
 
 ![Azure Endpoints](../../../img/Figure3.png)
-*Figure 3 Azure Endpoints*
+**Figure 3. Azure Endpoints**
 
 When you now browse to your webserver you should be welcomed by the Kibana start screen.
 
 ![Kibana Welcome Screen](../../../img/Figure4.png)
-*Figure 4 Kibana welcome screen*
+**Figure 4. Kibana welcome screen**
 
 Congratulations, you have just installed all parts of the ELK stack. Next, we will look at configuring Logstash to get events into the system.
 
@@ -197,7 +192,8 @@ Logstash is configured using a configuration file. A Logstash configuration file
 
 ![Logstash configuration ](../../../img/Figure5.png)
 
-Figure 5 Logstash configuration file structure
+**Figure 5. Logstash configuration file structure**
+
 The Logstash configuration file describes how events should flow through the Logstash pipeline with an input, filter and an output stage.
 
 *"If a newbie has a bad time, it's a bug."*
@@ -403,8 +399,8 @@ Sending events to Logstash
 We first have to send the events to Logstash before we can parse, index and search through them. There are several so called shippers which are responsible for transmitting events to Logstash.
 
 ![Shippers send events to Logstash](../../../img/Figure6-1.png)
+**Figure 6. Shippers move events to Logstash**
 
-Figure 6 Shippers move events to Logstash
 There are several shippers available that move events to Logstash. Logstash itself can also be used as a shipper. As Logstash runs with a footprint that is not friendly to under provisioned systems, several alternatives were created that have a smaller footprint, for example, the earlier mentioned Logstash-forwarder. Other alternatives are Beaver (written in Python) and Woodchuck (written in Ruby).
 
 I will be using Logstash-forwarder as I develop a lot of software that has to run on Windows. Logstash-forwarder is developed in Go and as such can be compiled and run on Windows.
@@ -456,7 +452,8 @@ Before we can start the logstash-forwarder we have to create a configuration fil
 It specifies under network which certificate to use and to what server the logs should be sent The files parameter specifies which paths and pattern should be used to search the log files. Pay special interest to using the double backslash on Windows as a folder separator. Before starting the logstash forwarder I have to add another end point to my Azure virtual machine to let Logstash connect to port 6379.
 
 ![Lumberjack specific endpoints](../../../img/Figure7.png)
-Figure 7 Specific end point for Lumberjack
+
+**Figure 7. Specific end point for Lumberjack**
 
 The Logstash forwarder can now be started with the following command.
 
@@ -471,7 +468,7 @@ The logstash-forwarder will monitor the folder for new or added logfiles and wil
 After we got the event flowing into the server, we can visualize the events using Kibana. With Kibana you can create and save custom dashboards. The default installation already contains a dashboard which is configured for Logstash as can be seen in Figure 8.
  
 ![Default Logstash dashboard in Kibana](../../../img/Figure8.png)
-Figure 8 Default Logstash dashboard in Kibana
+**Figure 8. Default Logstash dashboard in Kibana**
 
 The default Logstash dashboard contains a graph which counts the number of events over time and includes a search field which allows you to search on free text or search in specific fields. 
 
@@ -479,26 +476,25 @@ The functionality of Kibana deserves a separate article on its own. There are mu
 
 ![Kibana extended ](../../../img/Figure9.png)
 
-Figure 9 Kibana extended 
+**Figure 9. Kibana extended**
 
 ####Scaling the ELK stack
 As we are going to expand our system to receive and group more logs, the single Logstash server that we are currently using won’t be sufficient. We have to scale our architecture. Current it looks like Figure 8.
 
 ![Current Architecture](../../../img/Figure10.png)
-Figure 10 Current Architecture
+**Figure 10. Current Architecture**
 
 The first thing we can scale is the Broker. Broker is the part that receives the log events. Currently we are using the message buffer from Logstash. A good way to scale the broker is to use Redis on a separate server to acts as a broker. Redis is a popular open source key value storage. Logstash includes plugins for using Redis.
 
 To increase the throughput of the Indexer, we could also separate Logstash from Elasticsearch. So the new architecture looks like 
 
 ![Scaled Architecture](../../../img/Figure11.png)
-Figure 11 Scaled Architecture
+**Figure 11. Scaled Architecture**
 
 This architecture can be scale horizontally very easily. We can add more Redis servers to increase the queue capacity, we can add more Logstash server to increase indexing capacity and add more nodes to the Elasticsearch cluster to increase the performance of querying and filtering of data. A first step into scaling horizontally looks like Figure 12.
 
 ![Horizontally Scaled Architecture](../../../img/Figure12.png)
-
-Figure 12 Horizontally Scaled Architecture
+**Figure 12. Horizontally Scaled Architecture**
 
 By cross connecting both Redis servers and the Logstash indexer we also create redundancy and fault tolerance between the systems. The shippers also can connect to both Redis servers so that if one of the servers goes down, a shipper is still able to send its events.
 
