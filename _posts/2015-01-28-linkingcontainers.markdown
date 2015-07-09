@@ -9,13 +9,6 @@ tags:
 
 If you remember from my previous post, this is my current setup.
 
-{% highlight ruby %}
-def foo
-  puts 'foo'
-end
-{% endhighlight %}
-
-
 ![Current setup](../../../img/TwoDockerContainer-3.jpg)
 
 Ghost references the PostgreSQL server using the ip address of the Docker container running PostgreSQL. The problem is that each time I restart the container it gets a new ipaddress and I have to change the ipaddress in the config.js of Ghost. Luckily there is a better way to do this by linking containers.

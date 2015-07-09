@@ -35,29 +35,33 @@ I will be running docker-machine on a linux host. It is however also possible to
 The first thing you need to do before running docker machine to create hosts on Microsoft Azure is to generate a certificate that you will install in Microsoft Azure to allow docker machine to access Microsoft Azure.
 
 Generating a certificate valid for Azure can be done using the following commands on Ubuntu.
-```
+
+
+{% highlight bash %}
 $ openssl req -x509 -nodes -days 365 -newkey rsa:1024 -keyout azurecert.pem -out azurecert.pem
 $ openssl pkcs12 -export -out azurecert.pfx -in azurecert.pem -name "My Azure Certificate"
 $ openssl x509 -inform pem -in azurecert.pem -outform der -out azurecert.cer
-```
+{% endhighlight %}
 
 The created ```azurecert.cer``` file must be uploaded to the **Management Certificates** under Settings in the Azure management portal. 
 
 ![Azure Certificates](../../../img/AzureCertificates.JPG)
 
 After the certificate is uploaded, the docker host, an Ubuntu machine can be created using the following command.
-```
-$ docker-machine create -d azure --azure-subscription-id="89180bf3-e22d-55b0-b874-c3618233d5d0" --azure-subscription-cert="certificates/azurecert.pem" hostcreatedviadockermachine
-```
+{% highlight bash %}
+$ docker-machine create -d azure --azure-subscription-id="89180bf3-e22d-55b0-b874-c3618233d5d0" 
+   --azure-subscription-cert="certificates/azurecert.pem" hostcreatedviadockermachine
+{% endhighlight %}
 
 Docker-machine will connect to Microsoft Azure to create the actual docker host. This will take some time.
 
-```
-$ docker-machine create -d azure --azure-subscription-id="89180bf3-e22d-55b0-b874-c3618233d5d0" --azure-subscription-cert="certificates/azurecert.pem" hostcreatedviadockermachine
+{% highlight bash %}
+$ docker-machine create -d azure --azure-subscription-id="89180bf3-e22d-55b0-b874-c3618233d5d0"
+  --azure-subscription-cert="certificates/azurecert.pem" hostcreatedviadockermachine
 INFO[0002] Creating Azure machine...
 INFO[0094] Waiting for SSH...INFO[0433] "ubuntuviadockermachine" has been created and is now the active machine.
 INFO[0433] To point your Docker client at it, run this in your shell: $(docker-machine env ubuntuviadockermachine)
-```
+{% endhighlight %}
 When the command finished, the Microsoft Azure portal shows the new host up and running.
 
 ![New virtual machine](../../../img/NewlyVirtualMachineViaDockerMacine.JPG)
@@ -66,33 +70,34 @@ After performing the command logged at the end of the output of the docker-machi
 
 If you type the following command docker machine will show you the environment variables and it will show you that it is actually connected to the remote Docker host.
 
-```
+{% highlight bash %}
 $ docker-machine env
 export DOCKER_TLS_VERIFY=yes
 export DOCKER_CERT_PATH=/root/.docker/machine/machines/ubuntuviadockermachine
 export DOCKER_HOST=tcp://ubuntuviadockermachine.cloudapp.net:2376
-```
+{% endhighlight %}
 
 Docker-machine contains several commands to manage Docker hosts. For example, the command ```ls``` to list the available hosts.
 
-```
+{% highlight bash %}
 $ docker-machine ls
 NAME                   ACTIVE   DRIVER   STATE
 ubuntuviadockermachine *        azure    Running   
-```
+{% endhighlight %}
 
 Now you can simply issue docker command and they will be executed on the remote host. For example, doing a hello world via de busybox docker image.
 
-```
+{% highlight bash %}
 $ docker run busybox echo hello world
 Unable to find image 'busybox:latest' locally
 511136ea3c5a: Pull complete
 df7546f9f060: Pull complete
 ea13149945cb: Pull complete
 4986bf8c1536: Pull complete
-busybox:latest: The image you are pulling has been verified. Important: image verification is a tech preview feature and should not be relied on to provide security.
+busybox:latest: The image you are pulling has been verified. 
+   Important: image verification is a tech preview feature and should not be relied on to provide security.
 Status: Downloaded newer image for busybox:latest
 hello world
-```
+{% endhighlight %}
 
 With Docker-machine in place we are now ready to scale this blog using docker swarm. Which will be the topic of the next post.
