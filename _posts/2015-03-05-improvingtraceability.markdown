@@ -38,47 +38,47 @@ The installation of all components is done through a remote shell, using putty a
 ######Installing Elasticsearch
 
 As Elasticsearch runs on top of Java, the first prerequisite we have to fulfill before we can install Elasticsearch is Java. We install Java by entering the following command on the command line.
-```
+{% highlight bash %}
 $ sudo apt-get install openjdk-7-jre-headless
-```
+{% endhighlight %}
 This will download and install Java version 1.7. To validate if Java was installed correctly we enter the following command.
-```
+{% highlight bash %}
 $ java –version
-```
+{% endhighlight %}
 If Java was installed correctly the following response will be generated (the version number may differ)
-```
+{% highlight bash %}
 java version "1.7.0_65"
 OpenJDK Runtime Environment (IcedTea 2.5.3) (7u71-2.5.3-0ubuntu0.14.04.1)
 OpenJDK 64-Bit Server VM (build 24.65-b04, mixed mode)
-```
+{% endhighlight %}
 
 To install Elasticsearch we first have to download the package. We download Elasticsearch with the following command.
 
-```
+{% highlight bash %}
 $ wget  https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-1.4.1.deb
-```
+{% endhighlight %}
 
 When downloaded we can install Elasticsearch with the following command.
 
-```
+{% highlight bash %}
 $ sudo dpkg -i elasticsearch-1.4.1.deb
-```
+{% endhighlight %}
 
 And start it with the following command
 
-```
+{% highlight bash %}
 $ sudo service elasticsearch start
-```
+{% endhighlight %}
 
 We can validate if Elasticsearch was installed and is running correctly by entering the following command.
 
-```
+{% highlight bash %}
 $ curl http://localhost:9200
-```
+{% endhighlight %}
 
 Elasticsearch should give a JSON response that looks like the following
 
-```
+{% highlight yaml %}
 {
   "status" : 200,
   "name" : "Ultron",
@@ -92,7 +92,7 @@ Elasticsearch should give a JSON response that looks like the following
   },
   "tagline" : "You Know, for Search"
 }
-```
+{% endhighlight %}
 
 The name of the Elasticsearch node is automatically generated, so it will probably be different in your installation.
 
@@ -102,33 +102,34 @@ We now have the E of the ELK stack running. Next, we will install Logstash.
 
 Before we can install Logstash we first have to download the Logstash package. We download Logstash with the following command.
 
-```
+{% highlight bash %}
 $ wget https://download.elasticsearch.org/logstash/logstash/packages/debian/logstash_1.4.2-1-2c0f5a1_all.deb
-```
+{% endhighlight %}
 
 And install it by entering the following command
 
-```
+{% highlight bash %}
 $ sudo dpkg -i logstash_1.4.2-1-2c0f5a1_all.deb
-```
+{% endhighlight %}
 
 There is an additional package with community added contributions for Logstash that we need. We download this package with the following command.
 
-```
+{% highlight bash %}
 $ wget https://download.elasticsearch.org/logstash/logstash/packages/debian/logstash-contrib_1.4.2-1-efd53ef_all.deb
-```
+{% endhighlight %}
 
 And install it using this command.
 
-```
+{% highlight bash %}
 $ sudo dpkg –i logstash-contrib_1.4.2-1-efd53ef_all
-```
+{% endhighlight %}
+
 
 We then issue the following command to start Logstash
 
-```
+{% highlight bash %}
 $ sudo service logstash start
-```
+{% endhighlight %}
 
 This concludes the installation of the L part of the ELK stack. We move to the last part, installing Kibana, the front-end.
 
@@ -138,39 +139,40 @@ Kibana is implemented using HTML, CSS and JavaScript. Therefore, to run Kibana w
 
 To install nginx enter the following command
 
-```
+{% highlight bash %}
 $ sudo apt-get install nginx
-```
+{% endhighlight %}
+
 
 The installation process will automatically start nginx. To validate if nginx is installed correctly and running issue the following command.
 
-```
+{% highlight bash %}
 $ curl http://localhost
-```
+{% endhighlight %}
 
 nginx should respond as follows
 
-```
+{% highlight html %}
 <!DOCTYPE html>
 <html>
 <head>
 <title>Welcome to nginx!</title>
 <style>
 …
-```
+{% endhighlight %}
 
 We download and extract Kibana by entering the following command
 
-```
+{% highlight bash %}
 $ curl https://download.elasticsearch.org/kibana/kibana/kibana-3.1.2.tar.gz
  | tar xvz
-```
+{% endhighlight %}
 
 We then have to copy the Kibana folder to the nginx html folder by entering the following command.
 
-```
+{% highlight bash %}
 $ sudo cp kibana-3.1.2 /* /usr/share/nginx/html –R
-```
+{% endhighlight %}
 
 To validate if Kibana is working correctly we have to open two additional endpoints on the virtual machine running on Microsoft Azure. One endpoint for port 80 to be able to talk to the web server and another endpoint for port 9200 to let Kibana talk to Elasticsearch.
 
@@ -202,14 +204,14 @@ Input specifies the source of the data. This could be a file, a TCP port or othe
 Filter defines how the input stream should be parsed.
 Output defines where the parsed output should be sent and stored. Each part of the pipeline can be configured using the logstash configuration file. The configuration file resembles the structure of the pipeline.
 
-```
+{% highlight javascript %}
 input {
 }
 filter {
 }
 output {
 }
-```
+{% endhighlight %}
 
 Logstash contains several plugins that can be configured in each part of the pipeline. The list is too extensive to list here, but these are some examples.
 
@@ -223,7 +225,7 @@ The first real configuration we create is for parsing and indexing logs from an 
 
 The Logstash configuration file should be stored on our Ubuntu server in ```/etc/logstash/conf.d/logstash.conf```
 
-```
+{% highlight javascript %}
 input { 
   lumberjack {
     port => 6379 
@@ -270,7 +272,8 @@ output {
   elasticsearch {
   }
 }
-```
+{% endhighlight %}
+
 
 I will describe each part of the configuration file, starting with the input. 
 
@@ -290,17 +293,17 @@ The type fields adds a new field called ‘type’ to each event. The value of t
 
 The filter actually tries to parse the data of the event. The first line of the filter contains a condition which checks the type of the event. 
 
-```
+{% highlight bash %}
 if [type] == "IISLogs" {
-```
+{% endhighlight %}
 
 This means that the lines following this condition will only be executed if the type of the event equals “IISLogs”. As you remember we added this type to events that are input using the lumberjack input plugin.
 
 The next line states that events that start with a hash should be ignored. 
 
-```
+{% highlight bash %}
 if [message] =~ "^#" {  drop {}  }
-```
+{% endhighlight %}
 
 Lines in an IIS log file that start with a hash indicate a comment. These are normally only present in the header of the IIS logfile.
 
@@ -308,13 +311,13 @@ The next part uses the Logstash GROK plugin. GROK is a wrapper around a regular 
 
 Using GROK we are going to parse a IIS log event. A log line of a IIS log event looks like the following:
 
-```
+{% highlight bash %}
 2014-12-08 00:00:17 172.16.12.172 POST /url1/api.asmx - 443 VODKIJKWIN 192.168.16.135 PHP-SOAP/5.3.28-1~dotdeb.0 200 0 0 343
-```
+{% endhighlight %}
 
 The grok match parameter specifies the pattern to parse this line.
 
-```
+{% highlight yaml %}
 grok {
   match => ["message", 
     "%{TIMESTAMP_ISO8601:log_timestamp} 
@@ -331,7 +334,7 @@ grok {
      %{NUMBER:scstatus} 
      %{NUMBER:time_taken}"]
 }
-```
+{% endhighlight %}
 
 Note, that for readability the grok pattern has been split on to multiple lines. The actual grok match line should be on a single line.
 
@@ -341,33 +344,35 @@ After the GROK stage of the filter we have parsed the IIS log line into several 
 
 The filter continues with using the date plugin. The date plugin is able to convert a field into a date time and use that date time as the timestamp of this specific event. 
 
-```
+{% highlight yaml %}
 date {
       match => [ "log_timestamp", "YYYY-MM-dd HH:mm:ss" ]
       timezone => "Etc/UTC"
     }
-```
+{% endhighlight %}
 
 If no time zone is specified it adds a default time zone of “Etc/UTC” to the event. 
 
 The user agent plugin parses user agentstring into structured data. It uses BrowserScope data to add information like family, operating system, version and device. Browserscope is an open-source project for profiling web browsers and storing and aggregating crowd-sourced data about browser performance.
 
-```
+{% highlight yaml %}
 useragent {
   source => "useragent"
   prefix => "browser"
 }
-```
+{% endhighlight %}
+
 
 The prefix field specifies to add “browser” to all of the extracted fields.
 
 The last part of the filter shows the mutate plugin which enables you to mutate fields. You can remove, rename, replace or modify fields in events.
 
-```
+{% highlight yaml %}
 mutate {
   remove_field => [ "log_timestamp"]
 }
-```
+{% endhighlight %}
+
 
 Here we remove the log_timestamp field because we don’t need it anymore as it already converted into a timestamp. 
 
@@ -377,12 +382,12 @@ As the log event is now parsed and has a timestamp it is time to move it to the 
 
 In the output we specify a single output plugin. The elasticsearch plugin is obviously used for sending the event to Elasticsearch.
 
-```
+{% highlight yaml %}
 output {
   elasticsearch {
   }
 }
-```
+{% endhighlight %}
 
 No other fields are specified as we are running Elasticsearch on the same machine as Logstash. Otherwise we could have specified, for example the host and port.
 
@@ -390,9 +395,9 @@ No other fields are specified as we are running Elasticsearch on the same machin
 
 We have to restart Logstash after we have added or changed the Logstash configuration file. We restart Logstash with the following command.
 
-```
+{% highlight bash %}
 $ sudo service logstash restart
-```
+{% endhighlight %}
 
 This concludes installing and configuring our ELK stack using a single server. The final part to getting log events into the server is adding and configuring a shipper on the server that contains the logs of the application that we want to monitor.
 Sending events to Logstash
@@ -409,7 +414,7 @@ Currently there is no binary distribution of Logstash-forwarder, therefore to us
 
 As you may recall the input filter of Logstash used the lumberjack plugin to receive events from the logstash-forwarder.
 
-```
+{% highlight yaml %}
 input { 
   lumberjack {
     port => 6379 
@@ -418,15 +423,15 @@ input {
     ssl_key => "/home/azureuser/logstash.key"
   }
 }
-```
+{% endhighlight %}
 
 We are using port 6379 for the lumberjack input. To be able to send the log events securely to the server we need a certificate. This can be a self-signed certificate or a real certificate. I will be generating and using a self-signed certificate.
 
 I used the openssl command line to generate the self-signed certificate on the Ubuntu server. We generate a private key and certificate with the following command.
 
-```
+{% highlight bash %}
 $ openssl req -x509 -nodes -days 365 -newkey rsa:4096 -keyout logstash.key -out logstash.crt
-```
+{% endhighlight %}
 
 The self-signed certificate needs several types of information to put into the certificate. The only thing that is important is the Common Name, this must be set to the fully qualified domain name of the logstash server.
 
@@ -436,6 +441,7 @@ Creating the logstash-forwarder configuration file
 
 Before we can start the logstash-forwarder we have to create a configuration file that instructs the forwarder where to get the log event from and where to send them. Below a configuration file called logstash-forwarder.conf I use on a machine to send IIS logs to my central logstash server.
 
+{% highlight yaml %}
 {
   "network": {
     "servers": [ "elkstack.cloudapp.net:6379" ],
@@ -448,6 +454,7 @@ Before we can start the logstash-forwarder we have to create a configuration fil
     }
   ]
 }
+{% endhighlight %}
 
 It specifies under network which certificate to use and to what server the logs should be sent The files parameter specifies which paths and pattern should be used to search the log files. Pay special interest to using the double backslash on Windows as a folder separator. Before starting the logstash forwarder I have to add another end point to my Azure virtual machine to let Logstash connect to port 6379.
 
@@ -457,9 +464,9 @@ It specifies under network which certificate to use and to what server the logs 
 
 The Logstash forwarder can now be started with the following command.
 
-```
+{% highlight bash %}
 C:\lgf> logstash-forwarder.exe -config=logstash-forwarder.conf
-```
+{% endhighlight %}
 
 The logstash-forwarder will monitor the folder for new or added logfiles and will send them to the logstash server. To run logstash-forwarder in the background as a Windows service, we have to convert it into a Windows service. This can be done using [NSSM (the Non-Sucking Service Manager)](http://nssm.cc/). 
 
@@ -506,7 +513,7 @@ To configure the horizontally scaled ELK stack we need to make some changes to t
 
 The Logstash configuration file on both indexers needs to change. We use the Redis plugin to get the input from both Redis servers.
 
-```
+{% highlight yaml %}
 input {
   redis {
     host => "redis-server1"
@@ -522,19 +529,19 @@ input {
     key => "logstash"
   }
 }
-```
+{% endhighlight %}
 
 Currently Logstash-forwarder does not support connecting to Redis. The protocol that Logstash-forwarder uses includes compression, encryption and message acknowledgement, which Redis does not support. There are alternative shippers which do, such as beaver and woodchuck.
 
 If we switch to using Logstash as a shipper we could configure it using the following output filter in which the events are sent to one of the two configured Redis servers.
 
-```
+{% highlight yaml %}
 output {
   redis {
     host => ["redis-server1:6379", "redis-server2:6380"]
   }
 }
-```
+{% endhighlight %}
 
 ####Conclusion
 In this article I showed how to install and configure the ELK stack in such a way that enables transfering application logs from a Windows machine using logstash-forwarder to the machine that hosts the ELK stack. The host parses the application logs using Logstash, indexes the logs using Elasticsearch and allows visualizing hem using Kibana.
