@@ -59,7 +59,6 @@ The file is divided into two sections, ghost and postgres representing both cont
 * links: To which container should this container link
 * ports: Defines the port mapping
 * volumes: Defines the volume mapping
-
 * postgres: The name of the other container
 * image: The name of the docker image
 * environment: Defines the environment variables to set 

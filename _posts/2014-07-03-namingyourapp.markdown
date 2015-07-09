@@ -26,15 +26,14 @@ With this list you can go to the [Wordnik.com](http://www.wordnik.com "Wordnik w
 
 ![alt Screenshot Wordnik website](../../../img/wordnik.png)
 
-Another way to expand the list  is to go to [Urban Dictionary](http://www.urbandictionary.com "Urban dictionary web site") and look up additional names through their thesaurus functionality. 
-
+Another way to expand the list  is to go to [Urban Dictionary](http://www.urbandictionary.com "Urban dictionary web site") and look up additional names through their thesaurus functionality.  
 The same is true for [Visual Thesaurus](http://www.visualthesaurus.com/ "visual thesaurus web site") which also lets you find new words but using a visual tree. You can click through several levels of connections.
 
 ![alt Screenshot visual thesaurus web site](../../../img/visualthesaurus.png)
 
-One of the best ways to find good app names is by combining words of your list with other words. The web site [WerdMerge](http://werdmerge.com/ "werdmerge web site") makes this possible.
+One of the best ways to find good app names is by combining words of your list with other words. The web site [WerdMerge](http://werdmerge.com/) makes this possible.
 
-{<3>}![alt Screenshot werdmerge web site](../../../img/werdmerge.png)
+![alt Screenshot werdmerge web site](../../../img/werdmerge.png)
 
 Other good websites to come up with good names are
 
@@ -42,8 +41,6 @@ Other good websites to come up with good names are
 * [WikiRhymer](http://wikirhymer.com/ "wiki rhymer web site")
 * [Pun Generator]()
 
-Remember if you found a good name to check if it is clear, authentic and if it can be pronounced and spelled easy.
+Remember if you found a good name to check if it is clear, authentic and if it can be pronounced and spelled easy. And also don't forget to check if the name can be registered as a domain and on the several social channels via [Namechk](http://namechk.com/ "namechk web site")
 
-And also don't forget to check if the name can be registered as a domain and on the several social channels via [Namechk](http://namechk.com/ "namechk web site")
-
-Have fun with naming your app!
+**Have fun with naming your app!**

@@ -19,23 +19,15 @@ However, that there is no central hub in the Git model does not mean that we can
 
 Besides being distributed, Git also uses different terminology. Below the most important ones are described.
 
-**master** - the repository's main branch. Depending on the work flow it is the one people work on or the one where the integration happens
-
-**clone** - copies an existing git repository, normally from some remote location to your local environment.
-
-**commit** - submitting files to the repository (the local one); in other VCS it is often referred to as "check-in"
-
-**fetch or pull** - is like "update" or "get latest" in other VCS. The difference between fetch and pull is that pull combines both, fetching the latest code from a remote repo as well as performs the merging
-
-**push** - used to submit the code to a remote repository
-
-**remote** - these are "remote" locations of your repository, normally on some central server.
-
-**SHA** - every commit or node in the Git tree is identified by a unique SHA key. You can use them in various commands in order to manipulate a specific node.
-
-**head** - is a reference to the node to which our working space of the repository currently points.
-
-**branch** - is just like in other VCS with the difference that a branch in Git is actually nothing more special than a particular label on a given node. It is not a physical copy of the files as in other popular VCS.
+|**master**|the repository's main branch. Depending on the work flow it is the one people work on or the one where the integration happens|
+|**clone**|copies an existing git repository, normally from some remote location to your local environment|
+|**commit**|submitting files to the repository (the local one); in other VCS it is often referred to as "check-in"
+|**fetch or pull**|is like "update" or "get latest" in other VCS. The difference between fetch and pull is that pull combines both, fetching the latest code from a remote repo as well as performs the merging
+|**push**|used to submit the code to a remote repository
+|**remote**|these are "remote" locations of your repository, normally on some central server.
+|**SHA**|every commit or node in the Git tree is identified by a unique SHA key. You can use them in various commands in order to manipulate a specific node.
+|**head**|is a reference to the node to which our working space of the repository currently points.
+|**branch**|is just like in other VCS with the difference that a branch in Git is actually nothing more special than a particular label on a given node. It is not a physical copy of the files as in other popular VCS.
 
 It is important to define a standard way of working when using with Git in a development team. This Git workflow describes when to create branches, when to merge and how to handle releases.
 
@@ -50,11 +42,9 @@ The first development workflow is called Git-Flow. Git-Flow is a development mod
 ![Git-Flow workflow](../../../img/gitflow-model.png)
 
 I always advocate a lean process, using only the things that are really necessary and removing all complexity. So maybe you could imagine that this model looked a bit too complex to me when I first saw it. Later on when reading the process and the rationale behind it made much more sense. 
-
 Basically, before you implement anything, you start with creating a branch of one of the two branches that are always available and have an infinite lifetime (develop and master). 
-
 The *master branch* is the main branch in which the current state of the source code is always production-ready. The *develop branch* is the main branch in which the current state of the source code contains the latest delivered changes for the next release. 
-Besides main and developer, there are the following 3 other branches type that are created for a specific purpose.
+Besides main and developer, there are the following 3 other branches type that are created for a specific purpose.  
 
 * Feature branches
 * Release branches
@@ -70,10 +60,9 @@ the upcoming release, for example release-v1.2. When all testing is done the rel
 ####Hotfix branches
 A Hotfix branche is created to quickly fix a problem that is currently in production. When a critical bug in a production version must be resolved immediately, a hotfix branch may be branched off from the corresponding tag on the master branch that marks the production version. The name of the hotfix branch should include the new version number of the release, for example hotfix-1.2.1. When the test of the hotfix is finished it gets merged back into master and deployment. After the hotfix is also merged back into the develop branch is can be deleted. 
 
-For more information about Gitflow see the [original](http://nvie.com/posts/a-successful-git-branching-model/]() article. 
+For more information about Gitflow see the [original](http://nvie.com/posts/a-successful-git-branching-model/) article. 
 
 ###GitHub-Flow
-
 GitHub-Flow is a lightweight workflow that supports teams and projects were deploymenta are done regularly. GitHub Flow is designed by the team at GitHub and is also (just like GitFlow) based on branches. 
 
 In GitHub-Flow there are only two types of branches, first there is the master branch which should be always in a deployable state and secondly there are feature branches that developers create of master for implementing a feature or a fix. The branch should get a descriptive name that describes the feature or fix.
@@ -87,7 +76,6 @@ A Pull requests is a function that is built into GitHub. You basically ask the m
 The GitHub flow is a much simpler proces than Git flow. But means a much more mature deployment process in which we automatically and continuously deploy every checkin on the master branch. 
 
 ####Git-Flow or GitHub-Flow?
-
 So what did we decide to use and standardize for development? For now it seemed that Git-Flow best aligns with how we currently develop projects and maintain solutions for our clients. Although we would like to strive to continuously deliver features to our clients this is not a reality just yet. Currently our projects and maintenance is already centered around releases and therefore aligns best with GitFlow. So for now, Gitflow will be our development workflow for projects and maintenance. But this does not mean that this can't change in the future.
 
 
