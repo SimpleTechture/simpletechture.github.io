@@ -1,0 +1,515 @@
+
+
+<!DOCTYPE HTML>
+<html>
+<head>
+<title>Article Source</title>
+<link rel="stylesheet" type="text/css" 
+    href="//codeproject.cachefly.net/App_Themes/CodeProject/Css/Main.css?dt=2.8.150707.1" />
+<base href="http://www.codeproject.com/KB/windows-phone-7/" />
+</head>
+<body>
+<!--
+HTML for article "Blue Hour" by Patrick Kalkman
+URL: http://www.codeproject.com/KB/windows-phone-7/355127.aspx
+Copyright 2012 by Patrick Kalkman
+All formatting, additions and alterations Copyright © CodeProject, 1999-2015
+-->
+
+
+
+<p><b>Please choose 'View Source' in your browser to view the HTML, or File | Save to save this 
+file to your hard drive for editing.</b></p>
+
+<hr class="Divider subdue" />
+<div>
+
+
+
+
+<!-- Start Article -->
+<span id="ArticleContent">
+
+
+
+<ul class="download">
+<li><a href="355127/BlueHour_Src.zip">Download source - 2.2 MB</a></li>
+</ul>
+
+<p>
+<img src="355127/BlueHour1.png" alt="SplashScreen Blue Hour" width="240" height="400" />
+<img src="355127/BlueHour2.png" alt="Screenshot Blue Hour" width="240" height="400" />
+</p>
+
+<h2>Contents</h2><ul>
+<li><a href="#Introduction0">Introduction</a></li>
+<li><a href="#Background1">Background</a></li>
+<li><a href="#InfrastructureandTools2">Infrastructure and Tools</a></li>
+<li><a href="#FunctionalityofBlueHour3">Functionality of Blue Hour</a></li>
+<li><a href="#Architecture4">Architecture</a></li>
+<ul>
+<li><a href="#NFunqandMVVM5">NFunq and MVVM</a></li>
+<li><a href="#Prism6">Prism</a></li>
+<li><a href="#UnitTesting7">Unit Testing</a></li>
+<li><a href="#Animation8">Animation</a></li>
+<li><a href="#Navigation9">Navigation</a></li>
+<li><a href="#StoringSettings10">Storing Settings</a></li>
+<li><a href="#LocationServices11">Location Services</a></li>
+<li><a href="#Localization12">Localization</a></li>
+</ul>
+<li><a href="#Marketingofyourapp13">Marketing of your app</a></li>
+<ul>
+<li><a href="#Ratings14">Ratings</a></li>
+<li><a href="#SocialMedia15">Social Media</a></li>
+<li><a href="#Support16">Support</a></li>
+<li><a href="#MoreApps17">More Apps</a></li>
+<li><a href="#MobileAnalytics18">Mobile Analytics</a></li>
+</ul>
+<ul>
+<li><a href="#CertifyApplication19">Certify Application</a></li>
+<li><a href="#Privacypolicy20">Privacy policy</a></li>
+</ul>
+</ul>
+
+<h2><a name="Introduction0">Introduction</a></h2>
+
+<p>This article describes the implementation and process of developing Blue Hour. Blue Hour is a Window Phone application for calculation the time the sun rises and sets for the next 30 days.</p>
+<p>I love to take pictures using a digital camera. As most photographers know, light is the most important ingredient of a photo. The light during sunrise or sunrise is especially beautiful, making these periods ideal moments to take pictures.</p>
+<p>Blue hour refers to the period of twilight each morning and evening where there is neither full daylight nor complete darkness. The time is considered special because of the quality of the light at this time of day, hence the name of the application Blue Hour</p>
+
+<h2><a name="Background1">Background</a></h2>
+
+<p>
+During the Techdays 2012 in the Netherlands Microsoft made the attending developers the following offer: If you create three apps for the Windows Phone and these apps get approved into the market place you earn a Nokia Lumia 800. I did not apply directly because I did not know how much time it would take. Two days later I decided to apply for the offer as I like a challenge. After describing my three ideas I got a new Nokia Lumia 800 phone delivered at home. So it was time to create my first Windows Phone App.</p>
+<p>This article is written just after I submitted my first app for the second time to the marketplace. The first time it did not get certified because of reasons I will describe later in the article. As I was planning to develop three applications I took some time to create a proper infrastructure for the development.</p>
+
+<h2><a name="InfrastructureandTools2">Infrastructure and Tools</a></h2>
+
+<p>Windows Phone application are developed using Microsoft Silverlight. I used Visual Studio to implement the application. Visual Studio Express is installed automatically when installing the <a href="http://www.microsoft.com/download/en/details.aspx?id=27570">Windows Phone SDK</a>.</p>
+
+<p>For instruction and documentation on how to create Windows Phone applications I used the excellent tutorial application <a href="http://msdn.microsoft.com/en-us/library/gg490765.aspx">TailSpin</a> which describes how a team of software developers from Microsoft implemented a Windows phone application. I found it was a real implementation and not your typical demo application. Other resource used where <a href="http://channel9.msdn.com/Tags/windows+phone">video's</a> from channel 9 and the <a href="http://msdn.microsoft.com/en-us/library/ff402535(v=vs.92).aspx">documentation</a> on MSDN.</p>
+<p>The following frameworks and patterns were used during the implementing of Blue Hour.
+	</p><ul>
+		<li>Dependency Injection via <a href="http://funq.codeplex.com/">Funq</a></li>
+		<li><a href="http://msdn.microsoft.com/en-us/Video/gg241309">MVVM Model View View-Model</a> pattern for separation of concern</li>
+		<li><a href="http://msdn.microsoft.com/en-us/library/gg490766.aspx">Prism</a> framework for Command binding and global events</li>
+		<li><a href="http://silverlight.codeplex.com/releases/view/75888">Silverlight Toolkit</a> for Windows phone for additional controls and animations</li>
+		<li>Silverlight unit testing <a href="http://www.jeff.wilcox.name/2010/05/sl3-utf-bits/">framework</a></li>
+		<li><a href="http://www.mtiks.com">Mtiks</a> for usage analytics.</li>
+	</ul>
+
+<h2><a name="FunctionalityofBlueHour3">Functionality of Blue Hour</a></h2>
+<p>As described in the first paragraph Blue Hour calculates the sunrise and sunset times for your current location for the next 30 days. The application detects your location using the Windows Phone location services. I will describe this in more detail later in this article. The calculation of the sunrise and sunset was reused from a source code from a <a href="http://www.codeproject.com/Articles/78486/Solar-Calculator-Calculate-Sunrise-Sunset-and-Maxi">previous application</a>. The source code had to be converted to a Silverlight assembly which was done without any problems.</p>
+<p>The application had the following requirements
+	</p><ul>
+		<li>Present the times clearly in a scrollable list box</li>
+		<li>Let the user opt-in to allow the use of the location services</li>
+		<li>Enable rating, sharing and contact via email</li>
+		<li>Track the usage of the application</li>
+	</ul>
+
+<h1><a name="Architecture4">Architecture</a></h1>
+<p>As I am planning to write three applications I took some time to think about the base architecture of all three application. Each application will use the MVVM pattern to separate the view from the business logic. Dependency injection is used separate the creation of instances of classes from the actual use of the classes. 
+The NFunq dependency injection framework performs the actual injections of the instances. </p>
+    <center><img src="355127/BlueHour3.png" alt="structure" /></center>
+<p>How data is retrieved and visualized on to the view can be best described using an example. The image above shows the classes that play a role in this process. The class shown on the left is the view while the classes on the right perform retrieving data from an external or internal service.</p>
+<p>The view <code>SunriseSunsetListView</code> is databound to the <code>SunriseSunsetListViewModel</code>. When the user presses the refresh button on the view a command is triggered on the <code>SunriseSunsetListViewModel</code>. The <code>SunriseSunsetListViewModel</code> calls the <code>AstronomyService</code> to retrieve a list of sunrise and sunset times. The <code>AstronomyService</code> in its turn uses the <code>LocationService</code> and the <code>SunCalculator</code> to get the current location and to calculate the sunrise and sunset tiumes of that location. The <code>SunriseSunset</code> list which the AstronomyService acts as the model. This model gets translated into a ViewModel by the <code>SunriseSunsetListViewModel</code>. You could create a separate class to perform this mapping, I decided not to implement this because of the limited size and scale of the application.</p>
+<h2><a name="NFunqandMVVM5">NFunq and MVVM</a></h2>
+<p>Blue Hour uses the MVVM pattern to separate the presentation from the business logic. All the ViewModels from the application are bound to a view using data binding. A special class ViewModelLocator is implemented which wraps the dependency container. The ViewModelLocator has a separate property for each ViewModel in the application. Below an excerpt of the ViewModelLocator class is shown.</p>
+<pre lang="cs">public class ViewModelLocator
+{
+  private readonly ContainerLocator containerLocator;
+
+  public ViewModelLocator()
+  {
+    this.containerLocator = new ContainerLocator();
+  }
+
+  public SunriseSunsetListViewModel SunriseSunsetListViewModel
+  {
+    get
+    {
+      return this.containerLocator.Resolve<sunrisesunsetlistviewmodel>();
+    }
+  }
+  ....
+</sunrisesunsetlistviewmodel></pre>
+<p>The ViewModelLocator class instantiates the ContainerLocator in the constructor. ContainerLocator wraps the Container class of NFunq. The SunriseSunsetListViewModel requests an instance of the SunriseSunsetListViewModel class from the ContainerLocator. This ViewModel is then coupled to the view in XAML using the DataContext of the view using a static resource. To make this possible the resource must be created in the App.xaml file.</p>
+<pre lang="xml">&lt;Application.Resources&gt;
+  &lt;viewmodels:ViewModelLocator x:Key=&quot;ViewModelLocator&quot;/&gt;
+&lt;/Application.Resources&gt;
+</pre>
+<p>Then the resource can be used in view by binding the view to the ViewModel as follows.</p>
+<pre lang="cs">DataContext=&quot;{Binding Source={StaticResource ViewModelLocator}, Path=SunriseSunsetListViewModel}&quot;
+</pre>
+<p>The ContainerLocator class wraps the Container class of NFunq, it includes registration of the types. The generic Resolve method is responsible for constructing an instance of the requested type. The method delegates the actual creation of the instance to the Funq container. This class separates the application from the actual DI implementation. This gives us the freedom to switch to another DI framework if we ever need to.</p>
+<pre lang="cs">public class ContainerLocator : IDisposable
+{
+  private readonly Container container;
+
+  public ContainerLocator()
+  {
+    this.container = new Container();
+    this.ConfigureContainer();
+  }
+
+  public TService Resolve<tservice>()
+  {
+    return container.ResolveNamed<tservice>((string)null);
+  }
+
+  private void ConfigureContainer()
+  {
+    this.container.Register(
+        new SunriseSunsetListViewModel(
+            new AstronomyService(new SunCalculator(), new LocationService(
+                new BlueHourSettingsManager(new SettingsHelper()))), new BlueHourSettingsManager(new SettingsHelper())));
+    this.container.Register(new SettingsViewModel(new BlueHourSettingsManager(new SettingsHelper())));
+    this.container.Register(new AboutViewModel());
+  }
+....	
+</tservice></tservice></pre>	
+<p>People who ever used the Prism framework together with Unity in a Silverlight project may find the implementation strange. There is no auto registration with Funq that scans the assembly for types and registers them. Automatic construction of views together with their dependencies is not supported. I did not find another DI container for Windows Phone that supports these features.</p>
+<h2><a name="Prism6">Prism</a></h2>
+<p>I had used the Prism library with Silverlight development, therefore I was happy to find that there is a <a href="http://msdn.microsoft.com/en-us/library/gg490766.aspx">Windows Phone version</a>. The biggest reason to choose this framework was the ease with which you can attach commands to views and fire global events. With the MVVM pattern you don't directly code in the eventhandler of for example a button. Instead you create a Command inside the ViewModel and bind the button to this command using normal databinding.</p>
+<p>This has the advantage that your view is now totally decoupled from your ViewModel. This enables you to test your ViewModel more easily.</p>
+<pre lang="cs">public DelegateCommand AboutCommand
+{
+  get
+  {
+    return aboutCommand;
+  }
+
+  set
+  {
+    aboutCommand = value;
+    OnPropertyChanged(&quot;AboutCommand&quot;);
+  }
+}
+
+public SunriseSunsetListViewModel(IAstronomyService astronomyService, BlueHourSettingsManager blueHourSettingsManager)
+{
+  this.AboutCommand = new DelegateCommand(() =&gt; NavigationService.Navigate(&quot;/Views/About.xaml&quot;));
+  ...
+</pre>
+<p>This DelegateCommand is not available in Silverlight, it is something that comes with the Prism framework. In the constructor of the ViewModel I create an instance of the DelegateCommand and I instruct it to navigate to the about view when the user presses the button.</p>
+<pre lang="xml">&lt;Custom:Interaction.Behaviors&gt;
+	&lt;prismInteractivity:ApplicationBarButtonCommand ButtonText=&quot;Settings&quot; CommandBinding=&quot;{Binding ShowSettingsCommand}&quot;/&gt;
+	&lt;prismInteractivity:ApplicationBarButtonCommand ButtonText=&quot;Refresh&quot; CommandBinding=&quot;{Binding RefreshCommand}&quot;/&gt;
+	&lt;prismInteractivity:ApplicationBarButtonCommand ButtonText=&quot;About&quot; CommandBinding=&quot;{Binding AboutCommand}&quot;/&gt;
+&lt;/Custom:Interaction.Behaviors&gt;
+</pre>
+<p>The command gets bind to the ApplicationBarCommand in the XAML.</p>
+<h2><a name="UnitTesting7">Unit Testing</a></h2>
+<p>Unit testing is possible using the Silverlight Unit testing framework for Windows Phone. This framework is translated from the original Silverlight unit testing framework. You need a separate Windows Phone aplication  
+    to perform the actual testing. Although this is not ideal as it tends to break 
+    your TDD rythm, it is better than nothing.</p>
+
+<img src="355127/BlueHour_TestRunner.png" width="240" height="400" /><p>
+        Jeff Wilcox describes the release of this framework on his <a href="http://www.jeff.wilcox.name/2010/05/sl3-utf-bits/">blog</a>. 
+        I just converted the already existing test cases of the class that calculates 
+        the sunrise and sunset times to using this framework. </p>
+    <h2><a name="Animation8">Animation</a></h2>
+<p>The Silverlight toolkit for Windows Phone includes a nice implementation for page or view transitions. Instead of using the normal &quot;boring&quot; page transition, you can create a sliding or rotating animation when navigating from one screen to another. The implementation in your application is pretty easy to do. First thing you need is a reference to the toolkit. With this reference set you need to include the following Style in the Application.Resources element in your App.xaml file.</p>
+<pre code="xml">&lt;Style x:Key=&quot;AnimatedPage&quot; TargetType=&quot;phone:PhoneApplicationPage&quot;&gt;
+  &lt;Setter Property=&quot;toolkit:TransitionService.NavigationInTransition&quot;&gt;
+    &lt;Setter.Value&gt;
+      &lt;toolkit:NavigationInTransition&gt;
+        &lt;toolkit:NavigationInTransition.Backward&gt;
+          &lt;toolkit:SlideTransition Mode=&quot;SlideRightFadeIn&quot;/&gt;
+        &lt;/toolkit:NavigationInTransition.Backward&gt;
+        &lt;toolkit:NavigationInTransition.Forward&gt;
+          &lt;toolkit:SlideTransition Mode=&quot;SlideLeftFadeIn&quot;/&gt;
+        &lt;/toolkit:NavigationInTransition.Forward&gt;
+      &lt;/toolkit:NavigationInTransition&gt;
+    &lt;/Setter.Value&gt;
+  &lt;/Setter&gt;
+  &lt;Setter Property=&quot;toolkit:TransitionService.NavigationOutTransition&quot;&gt;
+    &lt;Setter.Value&gt;
+      &lt;toolkit:NavigationOutTransition&gt;
+        &lt;toolkit:NavigationOutTransition.Backward&gt;
+          &lt;toolkit:SlideTransition Mode=&quot;SlideRightFadeOut&quot;/&gt;
+        &lt;/toolkit:NavigationOutTransition.Backward&gt;
+        &lt;toolkit:NavigationOutTransition.Forward&gt;
+          &lt;toolkit:SlideTransition Mode=&quot;SlideLeftFadeOut&quot;/&gt;
+        &lt;/toolkit:NavigationOutTransition.Forward&gt;
+      &lt;/toolkit:NavigationOutTransition&gt;
+     &lt;/Setter.Value&gt;
+  &lt;/Setter&gt;
+&lt;/Style&gt;	
+</pre>
+<p>For my application I chose the slide transition but there are <a>other transitions</a> available. When you reference this style in a page the transition occurs when navigating to another page. The following should be added to the page's XAML.&nbsp;</p>
+<pre lang="xml">  &lt;phone:PhoneApplicationPage 
+    Style=&quot;{StaticResource AnimatedPage}&quot;
+</pre>
+<p>You also need to change the instance of the <code>RootFrame</code> instance in the code behing to a <code>TransitionFrame</code>.</p>
+<pre lang="csharp">// Do not add any additional code to this method
+private void InitializePhoneApplication()
+{
+  if (phoneApplicationInitialized)
+    return;
+
+  // Create the frame but don't set it as RootVisual yet; this allows the splash
+  // screen to remain active until the application is ready to render.
+  RootFrame = new TransitionFrame();
+  RootFrame.Navigated += CompleteInitializePhoneApplication;
+
+  // Handle navigation failures
+  RootFrame.NavigationFailed += RootFrame_NavigationFailed;
+
+  // Ensure we don't initialize again
+  phoneApplicationInitialized = true;
+}
+</pre>
+
+<p>
+</p><h2><a name="Navigation9"></a></h2><h2><a name="Navigation9"></a></h2><h2><a name="Navigation9">Navigation</a>&nbsp;</h2>
+<p>The <code>NavigationService</code> which is a default Windows Phone class is responsible for navigating from one page to another. Because Blue Hour uses the MVVM pattern it cannot use the navigation service straight out of the box. The NavigationService is a property of the <code>Page</code> class and the ViewModel does not know anything about the view.</p> 
+<p>There are several solutions for getting around this; one for example is to just pass the NavigationService from the page into the ViewModel. But this will make testing the ViewModel more difficult. Therefore, I used the solution as described by <a href="http://garfoot.com/blog/2010/09/silverlight-navigation-with-the-mvvm-pattern/">Rob Garfoot</a>. In this solution he created a wrapper around the <code>NavigationService</code> which gets filled via a dependency property.</p>
+<p>With <a href="http://garfoot.com/blog/2010/09/silverlight-navigation-with-the-mvvm-pattern/">this</a> solution navigation via the ViewModel is possible if you implement the following three steps.</p>
+<ol>
+  <li>Add the following to the XAML of the page that wants to navigate.
+<pre lang="xml">&lt;phone:PhoneApplicationPage 
+    Navigation:Navigator.Source=&quot;{Binding}&quot;
+</pre>
+  </li>
+  <li>
+    Implement <code>INavigable</code> in the ViewModel to let the dependency object set the NavigationService of your ViewModel.
+  </li>
+  <li>
+    Navigate to another view using the following code.
+<pre lang="csharp">private void NavigateToAView()
+{
+  NavigationService.Navigate(&quot;Views/About.xaml&quot;);
+}      
+</pre>
+</li>
+</ol>
+<h2><a name="StoringSettings10">Storing Settings</a></h2>
+<p>Most applications include a number of settings that can be changed by the user. Blue Hour has a setting to explicitly let the user opt-in for letting the aplication use the location services of the Phone. A separate view is responsible for managing those settings. The Windows Phone platform uses Silverlight's isolated storage for persisting settings.</p>
+<pre lang="cs">public class SettingsHelper
+{
+  private readonly IsolatedStorageSettings settings = 
+      IsolatedStorageSettings.ApplicationSettings;
+
+  public T GetSetting<t>(string settingName, T defaultValue)
+  {
+    if (!settings.Contains(settingName))
+    {
+        settings.Add(settingName, defaultValue);
+    }
+
+    return (T)settings[settingName];
+  }
+
+  public void UpdateSetting<t>(string settingName, T value)
+  {
+    if (!settings.Contains(settingName))
+    {
+        settings.Add(settingName, value);
+    }
+    else
+    {
+        settings[settingName] = value;
+    }
+
+    settings.Save();
+  }
+}
+</t></t></pre>
+<p>For reading and saving settings I created the <code>SettingsHelper</code> class. This class encapsulates reading and writing to the Isolated storage of the Windows Phone. Usage of this class is then simply providing the name and the value of the setting depending on whether you want to write or read a setting.</p>
+<pre lang="cs">public bool IsLocationServiceAllowed
+{
+  get
+  {
+    return this.settingsHelper.GetSetting(
+      Constants.Settings.AllowAccessToLocationServicesKey, false); 
+  }
+
+  set
+  {
+      this.settingsHelper.UpdateSetting(
+        Constants.Settings.AllowAccessToLocationServicesKey, value);  
+  }
+}  
+</pre>
+<p>This IsLocationServiceAllowed property from the ViewModel is then databound to the ToggleSwitch to let the user adjust the setting.</p>
+<img src="355127/BlueHour_Settings.png" width="240" />
+<h2><a name="LocationServices11">Location Services</a></h2>
+<p>Blue Hour uses the location services of the Windows Phone to detect the location of the customer and calculate the sunrise and sunset times based on that location. Access to the location services is achieved by the <code>GeoCoordinateWatcher</code> class. The constructor of this class takes a single argument that specifies the accuracy of the location that is needed by the application.
+</p><pre lang="cs">private readonly GeoCoordinateWatcher geoCoordinateWatcher = 
+  new GeoCoordinateWatcher(GeoPositionAccuracy.Default);
+</pre>
+<p>The accuracy parameter of the constructor can have two possible values <code>GeoPositionAccuracy.Default</code> which means low accuracy and <code>GeoPositionAccuracy.High</code> which obviously means high accuracy. Blue Hour needs only low accuracy which probably means than it supplies a coordinate faster.</p> 
+<h2><a name="Localization12">Localization</a></h2>
+<p>I wanted the Blue Hour application to be available in two languages, English and Dutch (my native language) therefore the application had to be localized. As with all Microsoft.Net applications that you want to localize it starts with adding all localizable strings to a resource file. 
+</p>
+<img src="355127/Screenshot_Resources.jpg" />
+<p>The default language of BlueHour is English, therefore the key value pairs in the AppResources.resx file are in the english language. All other supported languages should be added according to the following file name format AppResources.[culture].resx. The cultures that the application supports should be specified in the project file of the application. This is a bit of a nuisance, you have to unload the project in visual studio and edit the xml of the project manually. The SupportedCultures element in the application should include the languages that are supported by the application. Multiple cultures can be specified by separating them using a semicolon.
+</p>
+<pre lang="xml">  <supportedcultures>
+    nl-NL; en-US;
+  </supportedcultures>
+</pre>
+<p>By adding the supported cultures of your application to the project file, the application will automatically switch to that location if you switch the phones Display language via the Region+language page.</p>
+<img src="355127/Change_Display_Language.png" alt="Change Regional Language" width="240" height="400" />
+<p>To reference a resource from the sourcecode I introduce a new class called <code>LocalizedStrings</code> which is used from the Xaml views.
+</p><pre lang="cs">public class LocalizedStrings
+{
+  private readonly AppResources localizedResources = new AppResources();
+
+  public AppResources LocalizedResources
+  {
+    get
+    {
+        return localizedResources;
+    }
+  }
+}  
+</pre>
+<p>
+You have to create an application resource to be able to use this class/resource using databinding. The following adds the class <code>LocalizedStrings</code> to the application resources.
+</p>
+<pre lang="xml">&lt;Application.Resources&gt;
+  &lt;local:LocalizedStrings x:Key=&quot;LocalizedStrings&quot; /&gt;
+&lt;/Application.Resources&gt;  
+</pre>
+<p>Once this is added it is possible to bind to the resource using the following standard databinding syntax. The <code>Text=&quot;{Binding LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}&quot;</code> defines what the actual resource key is (<code>LocalizedResources.ApplicationTitle</code>) and where it comes from <code>Source={StaticResource LocalizedStrings}</code></p>
+<pre lang="xml">&lt;TextBlock x:Name=&quot;ApplicationTitle&quot; 
+    Text=&quot;{Binding LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}&quot; 
+    Style=&quot;{StaticResource PhoneTextNormalStyle}&quot;/&gt;</pre>
+<p>Referencing resource from code could be done in the normal .Net way, so by referencing <code>AppResource.ApplicationTitle</code>.
+    </p><p>Note that the only way to switch to another language is to restart your phone. If 
+        you want to allow the users to dynamically change the language of your 
+        application you have to implement this in your app by using a language switch. 
+        <a href="http://dotnetbyexample.blogspot.com/2012/03/instant-language-update-in-windows.html">Joost van Schaik</a> describes 
+        in good detail how you can implement this in your application.</p><h1><a name="Marketingofyourapp13">Marketing of your app</a></h1>
+<p>If you are a single app developer you will have to do the marketing of your application yourself. With social media and the integration of the market place this becomes possible 
+    and even easy. 
+</p><h2><a name="Ratings14">Ratings</a></h2>
+<p>Ratings is one of the most important aspect to get your app more visible. With good ratings your app becomes more visible and with more visibility comes the chance to get more good ratings.Ratings can be given to an application via the marketplace. By giving the user easy access to the ability to rate your application it becomes more likely that the user will rate your app. In BlueHour I have added a separate Rate button that redirects the user directly to the page to rate your app. Implementing this is very easy to do.</p>
+<pre lang="cs">private void RateApp()
+{
+  new MarketplaceReviewTask().Show();
+}
+</pre>
+<p>This sends the user directly to the rating page for your app. You can even show the user a popup and ask them to rate the application every n-th time your application gets started. But I find this behavior very annoying.</p>
+<h3><a name="SocialMedia15">Social Media</a></h3>
+<p>Another possibility to market your application is to create buzz for you application using social media. The Windows Phone has the ability to share all kinds of content using the connected social media of the user. It is also very easy to implement this ability in your application.</p>
+<pre lang="cs">private void ShareApp(SunriseSunset sunriseSunset)
+{
+  var shareTask = new ShareLinkTask();
+  shareTask.Message = string.Format(
+      &quot;According to BlueHour the sun rises at {0} and sets at {1} tomorrow.&quot;, 
+      sunriseSunset.Sunrise, 
+      sunriseSunset.Sunset);
+  shareTask.Title = &quot;Blue Hour WP7 App&quot;;
+  shareTask.LinkUri = new Uri(&quot;http://www.semanticarchitecture.net&quot;);
+  shareTask.Show();
+}  
+</pre>
+<p>When the user presses the button that executes this code the user is able to select on which linked social media account the message must be shared. Then after asking confirmation the message is sent.</p> 
+<h3><a name="Support16">Support</a></h3>
+<p>Users of your app will run into bugs in your application. The most obvious way for a user to report this bug is using the rating mechanism in the marketplace. Most likely this would be a negative rating. There is no way for you to contact the user that creates a negative rating. To support users that run into trouble you could integrate the support option into your application. 
+</p><pre lang="cs">public void ContactAuthor()
+{
+  var emailTask = new EmailComposeTask();
+  emailTask.Subject = &quot;#BlueHour support request&quot;;
+  emailTask.To = &quot;pkalkie@gmail.com&quot;;
+  emailTask.Show();
+}
+</pre>
+<p>In blue hour I added the ability for the user to send me a support email. The code above will create a template for an email and show this in the send email dialog. If the user wants to he or she can contact me as the author of the application for support.</p>
+<h3><a name="MoreApps17">More Apps</a></h3>
+<p>It is also possible to attract the users attention by suggesting other apps that you may have implemented and are available in the marketplace. This will promote the other applications that you have available in the marketplace.</p>
+<pre lang="cs">public void MoreApps()
+{
+  var searchTask = new MarketplaceSearchTask();
+  searchTask.SearchTerms = &quot;Patrick Kalkman&quot;;
+  searchTask.Show();
+}
+</pre>
+<p>The <code>SearchTerms</code> property should be set to your publishers name to enable searching for your other applications.</p>
+<h2><a name="MobileAnalytics18">Mobile Analytics</a></h2>
+<p>The marketplace keeps track of the amount of customers that download your application. But what you cannot see is if and how often the customer uses your application. There are several options available that add analytics to your application. Below a list of the more popular ones.</p>
+<ul>
+<li><a href="http://www.mtiks.com/">mTiks</a></li>
+<li><a href="http://www.localytics.com/">Localytics</a></li>
+<li><a href="http://msaf.codeplex.com/">Microsoft Silverlight Analytics Framework</a></li>
+<li><a href="http://www.flurry.com/">Flurry</a></li>
+<li><a href="https://runtimeintelligence.com/portal/Security/Logon">Preemptive Runtime Intelligence</a></li>
+</ul>
+<p>For Blue Hour I chose the mTiks platform because it is just to easy to implementing and it usage is free. To implement it you have to do the following.
+</p>
+<ul>
+  <li>Register with <a href="http://www.mtiks.com/">mTiks</a></li>
+  <li>Register you app with mTiks and add it to your account</li>
+  <li>Copy the identification of your application</li>
+  <li>Download the Windows Phone mTiks assembly</li>
+  <li>Reference the mTiks assembly</li>
+</ul>
+<p>
+The following should be added to the code behind of your app.xaml file. This notifies mTiks when you application is started and stopped. 
+</p>
+<pre lang="cs">private void Application_Launching(object sender, LaunchingEventArgs e)
+{
+  mtiks.Instance.Start(MTiksApplicationKey, Assembly.GetExecutingAssembly());
+}
+
+private void Application_Activated(object sender, ActivatedEventArgs e)
+{
+  mtiks.Instance.Start(MTiksApplicationKey, Assembly.GetExecutingAssembly());
+}
+
+private void Application_Deactivated(object sender, DeactivatedEventArgs e)
+{
+  mtiks.Instance.Stop();
+}
+
+private void Application_Closing(object sender, ClosingEventArgs e)
+{
+  mtiks.Instance.Stop();
+}  
+</pre>
+<p>It is also possible to notify mTiks when the user performs a certain function within your application. This can be implemented by triggering an event.
+</p>
+<pre lang="cs">mtiks.Instance.postEventAttributes(&quot;REFRESH&quot;);
+</pre>
+<p>mTiks then registers the amount of times this event gets fired from your application. Once you have this integration in place, mTiks presents you a nice dashboard with the analytics information of your app.</p>
+<center><img src="355127/Screenshot_mTiks.jpg" width="600" /></center>
+<h2><a name="CertifyApplication19">Certify Application</a></h2>
+<p>When you have finished your application and want to distribute it to customers, the application must get certified by Microsoft. Before an application gets certified it is thoroughly tested. To prepare for this certification you can use the Market Place Test Kit which can be started by right-clicking on your main application and selecting &quot;Open Marketplace Test Kit&quot;. The test kit is self explanatory and includes a number of automated test and a number of manual test that correspond with the tests that Microsoft executes before your application gets certified.</p>
+<p>One thing you have to update is the capabilities section in the WMAppManifest.xml 
+    file which is included in your project. This section describes the capabilities 
+    your application needs from the phone's infrastructure. Make sure that you 
+    update this section with the required capabilities. The Market Place Test Kit is 
+    able to identify the required capabilities of your application and can write 
+    these into the WMAppManifest.xml file.</p>
+<h3><a name="Privacypolicy20">Privacy policy</a></h3>
+<p>As I stated in the introduction this article was written just after I submitted Blue Hour for the second time to the market. The first time I submitted the app it failed certification. The test report I got back from the test team stated that I did not include a privacy policy.&nbsp;</p>
+<center>
+<img src="355127/Certification_Result.jpg" border="1" width="600" /> 
+</center>
+<p>I missed this as it is clearly stated in the <a href="http://msdn.microsoft.com/en-us/library/hh184841%28v=vs.92%29.aspx">requirements</a>. 2.7.2 states that <em>&quot;The privacy policy of your application must inform users about how location data from the Location Service API is used and disclosed and the controls that users have over the use and sharing of location data. This can be hosted within or directly linked from the application.&quot;</em></p>  
+<p>What I did was add a description to the settings screen that states what the application does with the retrieved location data and that the user can disable or enable it.</p>
+<img src="355127/BlueHour_Settings_Screenshot.png" width="240" height="400" /><p>I stripped out certain parts from the source code such as my application key for 
+        the mtiks framework. The source code of Blue Hour is available for download 
+        and hopefully will make developing your first Windows Phone application a 
+        little bit easier.</p><h2>Conclusion&nbsp;&nbsp;</h2><p>The application is available in the <a href="http://windowsphone.com/s?appid=5b1b6a1a-f4f4-4cdf-a508-078148339722" target="_blank" title="Link to BlueHour in the marketplace">marketplace </a>and the full source code can be downloaded from the top of the article. If you like the article, a vote or comment is appreciated. Thanks.&nbsp;&nbsp;</p><p>Below shows a photo that I took during the Blue Hour.&nbsp;It is taken in the Netherlands in the city of Rotterdam.&nbsp;</p><p style="text-align: center; "><img src="355127/BlueHour.jpg" width="600" height="400" /></p><p></p><p><span style="color: rgb(255, 153, 0); font-size: 13pt; font-weight: bold; ">History</span>&nbsp;</p>
+    <ul style="color: rgb(0, 0, 0); font-family: Verdana, Arial, sans-serif; font-size: 13px; font-style: normal; font-variant: normal; font-weight: normal; letter-spacing: normal; line-height: normal; orphans: 2; text-align: -webkit-auto; text-indent: 0px; text-transform: none; white-space: normal; widows: 2; word-spacing: 0px; -webkit-text-size-adjust: auto; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); ">
+        <li style="font-family: Verdana, Arial, sans-serif; font-size: 10pt; line-height: normal; ">
+            v1.0 27/03/2012: Initial and first release&nbsp;&nbsp;</li><li style="font-family: Verdana, Arial, sans-serif; font-size: 10pt; line-height: normal; ">v1.1 30/03/2012: Small updates to the article regarding the certification&nbsp;</li><li style="font-family: Verdana, Arial, sans-serif; font-size: 10pt; line-height: normal; ">v1.2 23/04/2012: Added photo taken during the blue hour&nbsp;</li>
+    </ul>
+
+
+
+
+</span>
+<!-- End Article -->
+
+
+
+
+</div> 
+</body>
+</html>

@@ -231,6 +231,20 @@ h4 + p {
 	margin-top: 5px;
 }
 
+h1{
+	font-size: 18px;
+	line-height: 24px;
+	color: #212121;
+	font-weight: 700;
+}
+
+h2{
+	font-size: 14px;
+	line-height: 20px;
+	color: #212121;
+	font-weight: 700;
+}
+
 /* --------------------------------------
 -----   STRUCTURE   -----
 ------------------------------------------*/

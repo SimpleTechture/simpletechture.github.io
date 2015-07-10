@@ -1,0 +1,414 @@
+---
+layout: post
+title: RegiRide
+tags:
+- Windows Phone
+- App
+---
+
+![Screenshot 1](../../../img/RegiRide1.jpg)
+![Screenshot 2](../../../img/RegiRide2.png)
+
+#Introduction
+This article describes the implementation and process of developing RegiRide. RegiRide is the second application that I developed for the Window Phone. More information about why I am developing Windows phone applications can be found [here](http://www.codeproject.com/Articles/355127/Blue-Hour). I got a lot of positive reactions from my first [article](http://www.codeproject.com/Articles/355127/Blue-Hour) that made me decide to write a new article and open up the source of this application. I hope that this article will inspire other people to start developing new windows phone applications. I wrote this article during the implementation of the application and finished it just after RegiRide got certified. RegiRide is currently available in the [Marketplace](http://windowsphone.com/s?appid=9fffb384-8d52-46cc-82a4-e05d931920c7).
+
+##RegiRide
+The second application that I developed is called RegiRide which as its name implies can be used to register rides. I am in the luxurious position to drive a company car. I use this car to drive to and from clients. When you drive a company car in the Netherlands and use the car privately you must pay extra taxes. When you only use the company car for business, you don't have to pay those additional taxes. But to prove this to the tax authority, you have to create a complete registration that includes all the rides made with the car.
+
+You can create this registration using pen and paper, the method I used before developing RegiRide or use an automated solution. RegiRide is a Windows Phone application that provides such an automated solution, it enables people that own a company car to create a registration of their business rides.The tax authority in the Netherlands defined the following requirements for the registration.
+For every ride you have to register the following
+
+* The Date
+* The start and end mileage of the car
+* The start and end address
+* The route (only if it is not the normal route)
+* If the ride was private or business.
+
+Additionally I added the following requirements
+
+* Easily register a ride via a mobile telephone
+* Export the registered rides via a file with comma separated value (CSV) to import the data into excel
+* Be able to register the rides without an active data connection
+
+It is also required that you register the make, the model, the license plate and the period the car was used.
+I hear you thinking, are their not a ton of these kinds of apps already available in the app store? Well in the Windows phone marketplace some application exists. But all these applications require you to register with an online service to export your data. For me it was important that the ownership of the data and the data itself stays with customer. 
+
+#Architecture
+Based on the requirements, the first thing that the application needs was a way to persist the registered rides on the telephone. Luckily for me Windows Phone Mango 7.5 supports storing relational data in a local database. This database is stored on to your application's Isolated Storage. The local database is an implementation of SQL compact specifically for Windows Phone Mango. LINQ to SQL is available and can be used as an ORM engine. 
+The image below shows the high level architecture of the application.
+
+![Architecture](../../../img/RegiRide_Architecture.png)
+
+I will explain each part of the architecture from left to right. On the left is the view of the application which is data bound to the View Model according to the [MVVM](http://en.wikipedia.org/wiki/Model_View_ViewModel). The view model is filled using the mapper, which is responsible for mapping the model to the view model. The repositories are responsible for creating the LINQ to SQL queries; I create a single repository per entity. Therefore, for RegiRide I implemented a RideRepository and an AddressRepository. 
+For example, the AddressRepository has a method which retrieves all the addresses from the database.
+
+{% highlight csharp %}
+public List<address> GetAll()
+{
+  return
+  ( from address in rideDataContext.Addresses
+    orderby address.Name
+    select address
+  ).ToList();
+}
+{% endhighlight %}
+
+This method returns a list of Addresses or according to the architecture a list of models. The application translates the model to view modes using a mapper.
+Another part of the functionality is the ability to export the registered rides to Dropbox. A user clicks the export button on a view, this results into a command getting fired in the view model. This command gets all the necessary models from the database via a repository and maps them to an export model. The list of export models gets translated into a csv file. This file is then uploaded to the Dropbox account of the user.
+
+#Tools and framework
+I made some changes to the list of tools and frameworks that I used for developing my previous application. The list below shows the current list of tools and frameworks used during the development of RegiRide.
+
+* [YLAD](http://ylad.codeplex.com/) (Your last about dialog)
+* [MVVM Light](http://mvvmlight.codeplex.com/) (instead of Prism)
+* [Silverlight Toolkit](http://silverlight.codeplex.com/) (Awesome set of free controls)
+* [Dropnet](https://github.com/dkarzon/DropNet) (Dropbox integration)
+* [MTiks](http://www.mtiks.com/) (Analytics framework)
+* [SimpleIoc](http://mvvmlight.codeplex.com/) (DI container included with MVVM Light) instead of NFunq
+
+Why did I switch from Prism to MVVM Light? I saw a [video of a presentation](href="http://channel9.msdn.com/Events/MIX/MIX11/OPN03) of Laurent Bugnion called Deep Dive MVVM in which he talked about how to set up your xaml based application when using the MVVM pattern. In this video he used the MVVM Light framework which he implemented. The one thing that got my attention was the way how the framework handled the OnPropertyChanged events.
+Instead of calling the <code>propertychanged</code> event using a string, the MVVMLight framework uses an expression to define a reference to the property. This way you get compile time checking instead of the normalrun-time. I found this to be an elegant solution. See below an example from RegiRide. It will introduces a slight overhead as the MVVM Light uses reflection to get the actual name of the property as a string. 
+
+{% highlight csharp %}
+public class AddressViewModel : SelectedAddress
+{
+ get
+ {
+  return addressViewModel;
+ }
+ set
+ {
+  if (addressViewModel == value)
+  {
+   return;
+  }
+  addressViewModel = value;
+  RaisePropertyChanged(() => SelectedAddress);
+ }
+}
+{% endhighlight %}
+
+#MVVM and MVVM Light
+As already mentioned I switched from [Prism](http://msdn./microsoft.com/en-us/library/gg490766.aspx) to [MVVM](http://mvvmlight.codeplex.com/) Light for this implementation. In this section I describe in more detail how data is retrieved from the database, changed and submitted back to the database. Data that is retrieved from the repository is converted into a view model using a mapper. This all results into for example, the manage addresses screen.
+![Manage Addresses Screen](../../../img/RegiRide3.png) 
+
+The code below shows the view model from the above view in action.
+{% highlight csharp %}
+public class AddressListViewModel : ViewModelBase, INavigable
+{
+ public AddressListViewModel(IAddressRepository addressRepository)
+ {
+  this.addressRepository = addressRepository;
+  this.addNewAddressCommand = new RelayCommand(this.AddNewAddress);
+  this.loadAddressListCommand = new RelayCommand(this.LoadAddressList);
+ }
+
+ private void LoadAddressList()
+ {
+  AddressList = AddressListMapper.Map(
+     this.addressRepository.GetAllWithNumberOfRides());
+ }
+  ...
+}
+{% endhighlight %}
+
+The loadAddressListCommand is a <code>RelayCommand</code> which is databound to the load event of the actual view and when executed calls the <code>LoadAddressList</code> method. This method uses the <code>addressRepository</code>, which is injected through the constructor by SimpleIOC, to retrieve all the addresses. The <code>AddressListMapper </code>does the actual work by creating the <code>AddressList</code> which is an <code>ObservableCollection&lt;AddressViewModel&gt;</code>. Lets look into more detail into the <code>Map</code> method in the <code>AddressListMapper</code>.
+
+{% highlight csharp %}
+public static ObservableCollection<AddressViewModel> Map(List<Address> addressList)
+{
+ var addresses = new ObservableCollection<AddressViewModel>();
+ foreach (Address address in addressList)
+ {
+  addresses.Add(new AddressViewModel(address, WhichAddress.None));
+ }
+ return addresses;
+}
+{% endhighlight %}
+
+The Map method creates for each instance of an Address, an instance of an AddressViewModel. *The actual model is given as an argument to the constructor*. By keeping a reference to the model in the view model and writing changes directly from the view model into the model, LINQ to SQL keeps track of the state of the model. When we want to perform an update to an address, it becomes as easy as calling <code>SubmitChanges</code> on the data context.
+
+{% highlight csharp %}
+public void Save(Address address)
+{
+ rideDataContext.SubmitChanges();
+}
+{% endhighlight %}
+
+New addresses are created and saved using the same method. When the user adds a new address, a new instance of the Address model is created and filled using data binding. I changed the <code>Save</code> method so that it calls the <code>InsertOnSubmit</code> when the address is a new instance. The <code>GetOriginalEntityState</code> returns  an instance that contains the original state of the entity. If this method returns null, I assume that it is a new entity.
+
+{% highlight csharp %}
+public void Save(Address address)
+{
+ if (rideDataContext.Addresses.GetOriginalEntityState(address) == null)
+ {
+  rideDataContext.Addresses.InsertOnSubmit(address);
+ }
+ rideDataContext.SubmitChanges();
+}
+{% endhighlight %}
+
+More on LINQ to SQL and how to model and generate the database later in this article.
+
+#Communication between view(models)
+The managing address functionality consists of two views, both can be seen below. When the user selects an address the detail address screen opens. Also when the user presses the add button, the user switches to the detail screen.
+
+|![Manage Address](../../../img/RegiRide3.png)|![Manage Address Detail](../../../img/RegiRide4.png)
+
+In both scenarios, adding and changing, communication is necessary between the view(model) that shows the list and the view(model) that shows the address details. 
+The application uses the MVVM Light framework for communication. MVVM Light has some features to make communication easy. The MVVM Light framework includes a messaging infrastructure that enables you to send messages internally in your application. Basically there are two possible ways to send a message, first using an overload of the <code>RaisePropertyChanged</code> and secondly by using the <code>Messenger.Default.Send</code> command. For the address detail screen I used the messaging overload of <code>RaisePropertyChanged</code>.
+
+{% highlight csharp %}
+public AddressViewModel SelectedAddress
+{
+ set
+ {
+  var oldValue = selectedAddress;
+  selectedAddress = value;
+  this.RaisePropertyChanged(() => SelectedAddress, oldValue, selectedAddress, true);
+  NavigationService.Navigate("/Views/AddressDetailView.xaml");
+ }
+ get
+ {
+  return selectedAddress;
+ }
+}
+{% endhighlight %}
+
+The <code>RaisePropertyChanged</code> method includes an overload that accepts a boolean argument, called broadcast. This last argument of the<code>RaisePropertyChanged</code> event indicates whether or not a message should be broadcasted regarding this change. MVVM Light, under the covers construct and sends a message of type <code>PropertyChanged&lt;AddressViewModel%&gt;</code>. So any subscribers listening for this specific message will get it delivered via the messaging infrastructure.
+On the other receiving side, the detail view, you have to subscribe to this specific message. This is possible using the Register method of the Messenger. In the constructor of the <code>AddressViewModel</code>, a subscription is created on messages of type <code>PropertyChangedMessage&lt;AddressViewModel&gt;</code>. 
+
+{% highlight csharp %}
+public AddressDetailViewModel(IAddressRepository addressRepository, IRideRepository rideRepository)
+{
+ this.addressRepository = addressRepository;
+ this.rideRepository = rideRepository;
+
+ SaveAddressCommand = new RelayCommand(SaveAddress);
+ CancelCommand = new RelayCommand(Cancel);
+ DeleteCommand = new RelayCommand(Delete);
+
+ Messenger.Default.Register<PropertyChangedMessage<AddressViewModel>>(
+  this,
+  message =>
+   {
+    SelectedAddress = null;
+    SelectedAddress = message.NewValue;
+    if (message.NewValue != null)
+    {
+     whichAddress = message.NewValue.WhichAddress;
+    }
+   });
+}
+{% endhighlight %}
+
+The entire <code>AddressViewModel</code> is sent as payload with the message and is directly set to the <code>SelectedAddress</code> property of the <code>AddressDetailViewModel</code>. This property is bound to the different fields on the view which in its turn gets refreshed so that the data is directly shown on the screen.
+By communicating using messages instead of direct references, you decouple both view models. In the RegiRide example the list and the detail view don't know about each others existence. This will increase the flexibility and testability of your view models. 
+
+#Working with Design Time Data
+
+Windows Phone applications should be designed according to the [Metro design guidelines](http://msdn.microsoft.com/en-us/library/hh202915%28v=VS.92%29.aspx). Jeff Wilcox has [translated](http://www.jeff.wilcox.name/2011/03/metro-design-guide-v1) this into a set of concrete actions and recommendations. To be able to make sure your application follow these guidelines it is important to be able to work with data populated views during design time. This is also known as blendability, the ability to work with design time data in Microsoft Blend. It is possible to show your (dummy) data during design time using some guidance. There are different possibilities to be able to work with design-time data. It is possible to use the [Silverlight design-time attributes](http://msdn.microsoft.com/en-us/library/ff602277VS.95.aspx) which allow you to work with attributes that are only available during design time. 
+Another approach is to check if the application is working in design-time mode and based on that information use different parts of your application. This is the approach I took when implementing RegiRide. I use a class called ContainerLocator which is responsible for registering the types in the SimpleIoc container. In the configure method of this class I switch repositories depending on whether the application is running in design time or runtime.
+
+{% highlight csharp %}
+if (!ViewModelBase.IsInDesignModeStatic)
+{
+ SimpleIoc.Default.Register<IAddressRepository, AddressRepository>();
+ SimpleIoc.Default.Register<IRideRepository, RideRepository>();
+ SimpleIoc.Default.Register<ISettingsHelper, SettingsHelper>();
+}
+else
+{
+ SimpleIoc.Default.Register<IAddressRepository, DesignAddressRepository>();
+ SimpleIoc.Default.Register<IRideRepository, DesignRideRepository>();
+ SimpleIoc.Default.Register<ISettingsHelper, DesignSettingsHelper>();
+}
+{% endhighlight %}
+
+The <code>ViewModelBase</code> is a class from the MVVM Light framework which as the name suggest is a base class from which ViewModel can inherit. It also has a static property <code>IsInDesignModeStatic</code> that indicates if the application is working in design-time.
+Another helpful tool is the [MetroGridHelper](http://www.jeff.wilcox.name/2011/10/metrogridhelper) which displays a grid on your view according to the Metro design guidelines. Using this `grid it is possible to align your controls. It is also possible to show the grid in design-time using a [slightly modified version](http://www.windowsphonegeek.com/articles/MetroGrid-component-for-Windows-Phone).
+
+#Code first / Database model
+
+When you need to presist data in your Windows Phone application you can use LINQ to SQL to create and query a database. The suggested approach is to start code first when using the LINQ to SQL framework for Windows Phone. This means creating first the model classes that you want so store in the database and annotating these classes using the LINQ to SQL attributes. For RegiRide I needed the following database model. 
+
+![database model](../../../img/RegiRide_Database_Model.png)
+
+A Ride has a set of properties and a relation to two addresses, the start address and the end address. First, I tried to create the classes code first and generate the database from that. This was somewhat a challenge, as getting the right annotations was difficult.
+I found an [article](http://www.windowsphonegeek.com/articles/Using-SqlMetal-to-generate-Windows-Phone-Mango-Local-Database-classes) on [http://www.windowsphonegeek.com](http://www.windowsphonegeek.com) that suggested using SQLMetal. [SQLMetal](http://msdn.microsoft.com/en-us/library/bb386987.aspx) is a command-line code generation tool that is able to generate the code including the mapping attributes from an already existing database. The SQLMetal tool is specifically meant for the full .Net Framework and [LINQ to SQL](http://msdn.microsoft.com/en-us/library/hh202872(v=vs.92).aspx). Therefore, the generated code will not be 100% compatible with the LINQ to SQL version on the Windows Phone. What I did was create both the tables in a local SQL Server express edition and generated the classes using the SQLMetal command line tool. After that I removed the parts that I did not needed or did not compile. Below a part of the generated and changed <code>Address</code> class can be seen.
+
+{% highlight csharp %}
+[Table]
+public class Address : PropertyChangeAndChangingEventHandlerBase
+{
+  private readonly EntitySet<Ride> startRide;
+  private readonly EntitySet<Ride> endRide;
+  private Guid id;
+  private string name;
+  private string street;
+  private string postalCode;
+  private string city;
+
+  ...
+}
+{% endhighlight %}
+
+The <code>EntitySet</code> fields represent the references to the Ride and allow you to automatically load the referenced Ride when using that field. For me it was not important to have those fields on this side. I only need to be able to navigate from the Ride to the Address instead of the other way around. But I kept it as it may prove to be useful in the future.
+
+#Database creation
+
+The database is created by the <code>CreateDatabase</code> method from the <code>DataContext</code> class. This <code>DataContext</code> class comes from LINQ to SQL. The source code below show the <code>RideDataContext</code>, this class derives from the DataContext base class and contains an <code>Initialize</code> method that creates the database if it does not exist. When the user deinstalls the application the database is automatically removed from the phone.
+
+{% highlight csharp %}
+public class RideDataContext : DataContext
+{
+ public Table<Ride> Rides;
+ public Table<Address> Addresses;
+   
+ public RideDataContext(string fileOrConnection)
+     : base(fileOrConnection) { }
+
+ public void Initialize()
+ {
+  if (!this.DatabaseExists())
+  {
+   this.CreateDatabase();
+  }
+ }
+}
+{% endhighlight %}
+
+The <code>Initialize</code> method of the data context is called when the application starts. This data context is registered using the factory method overload from the SimpleIoc container.
+
+{% highlight csharp %}
+SimpleIoc.Default.Register(() =>
+{
+ var context = new RideDataContext(Constants.Settings.DatabaseConnectionString);
+ context.Initialize();
+ return context;
+});
+{% endhighlight %}
+
+To check and browse the created database on the Windows Phone or the Emulator I used the tool [IsoStoreSpy](http://isostorespy.codeplex.com). This tool enables you to look into the isolated storage of the emulator or phone and directly query or download the database.
+
+#Exporting the registered rides
+
+RegiRide offers functionality to export the registrated rides. My first intention was to implement this functionality by creating an email and attach the registered rides to the email. But to my surprise I found out that there is currently no way to send an email using an attachment in Windows Phone. At least no way to program this.
+
+![No mail attachment](../../../img/NoMailAttachment.png) 
+
+This was a real problem because I did not want to create a server back-end with a web service just to be able to send an email. Putting the content into the body of the email also was not an option because the size of the body is limited to 33k characters. After trying some external email send services I finally settled with Dropbox integration. It felt like a compromise, because users of the application are now forced to open an Dropbox account just to be able export their registered rides. But on the other end Dropbox is a free service and a lot of people already make use of it. Maybe in the future I will add functionality to export the rides to other external services e.g. Microsoft SkyDrive or Google GDrive.
+
+#Dropbox integration with DropNet
+
+There are frameworks that provide Dropbox integration for the .Net Framework that include Windows Phone support. There is the <a href="https://github.com/SpringSource/spring-net-social-dropbox" target="_blank">Spring.Net Social extension for Dropbox</a> which includes Windows Phone support and there is <a href="http://sharpbox.codeplex.com/releases/view/74634" target="_blank">Sharpbox</a> which also suports Windows Phone. I finally settled with <a href="https://github.com/dkarzon/DropNet" target="_blank">DropNet</a> from Damian Karzon which just worked for me right out of the box. 
+DropNet includes a sample Windows Phone application that just worked. Integration of Dropbox was easy this way. The RideList view has an export button which calls the <code>Export</code> method to export the registered ride to the Dropbox account.
+
+{% highlight csharp %}
+public void Export()
+{
+ if (networkConnection.IsAvailable())
+ {
+  if (regiRideSettingsManager.Authenticated && dropNetClient.UserLogin != null && dropNetClient.UserLogin.Token != null)
+  {
+   string export = exportManager.GenerateExport(rideRepository.GetAll());
+   byte[] exportBytes = Encoding.Unicode.GetBytes(export);
+   string fileName = exportManager.GenerateExportFileName();
+   dropNetClient.UploadFileAsync(regiRideSettingsManager.DropboxFolder, fileName, exportBytes, UploadSuccess, UploadFailure);  }
+  else
+  {
+   MessageBox.Show(AppResources.ExportDropboxNotification);
+   this.NavigationService.Navigate("/Views/DropboxView.xaml");
+  }
+ }
+ else
+ {
+  MessageBox.Show(AppResources.NoNetworkAvailable);
+ }
+}
+
+{% endhighlight %}
+The <code>dropNetClient</code> from the DropNet library is responsible for the connection to the Dropbox account. The <code>Export</code> method checks if the current user is authenticated and if so the csv file is generated and uploaded to the Dropbox of the user using an unique file name. The authentication for the Dropbox account is handled by DropNet and uses the webbrowser control.
+![Splashscreen RegiRide](../../../img/RegiRide5.png)
+
+Once the user allows the application to access the Dropbox the access token is save into the isolated storage. This way the user only has to allows once and there is no need to store the users credentials.
+
+#LongListSelector
+
+For displaying rides and grouping I used the LongListSelector control from the [Silverlight toolkit](http://silverlight.codeplex.com). This control is specifically designed for showing large list of data by including a grouping mechanism. The registered rides are grouped by week. So the blue bar in the screenshot below indicates that the rides below it are from week 15 in 2012. These rides all fall into the same group.
+![Grouped rides](../../../img/RegiRide2.png)
+
+This long list selector works with a set of templates that lets you customize its complete layout. The following customizable templates are available
+
+* HeaderTemplate, FooterTemplate
+* GroupHeaderTemplate
+* GroupItemTemplate
+* GroupItemsPanel
+* ItemsTemplate
+
+This makes the long list selecter a very customizable control.
+The control won't perform the grouping automatically, you must provide a grouped list yourself. For example, bind to an <code>ObservableCollection&lt;T&gt;where T : ObservableCollection&lt;T&gt;.</code> the type T must also expose a Key property which indicates the grouping property.
+  
+In RegiRide I created a property called GroupedRideViewModels which performs the grouping and binds to the <code>ItemsSource</code> property of the LongListSelector.
+
+{% highlight csharp %}
+public IEnumerable<grouping<string,>> GroupedRideViewModels
+{
+ get
+ {
+  if (RideList != null)
+  {
+   var result = from ride in RideList
+    group ride by ride.WeekNumberFormatted into grouped
+     select new Grouping<string, RideViewModel>(grouped);
+   return result;
+  }
+  return null;
+ }
+}
+{% endhighlight %}
+
+#YLAD (Your Last About Dialog)
+
+In my [previous application](http://www.codeproject.com/Articles/355127/Blue-Hour) I created the about dialog myself. This time I used the [YLAD](http://ylad.codeplex.com/) component to create an about dialog. This component from Peter Kuhn enables you to easily create an about dialog. It is easily configurable via a XML file. The image below shows the about dialog. It includes a pivot control which includes the version history of your application. I can recommend this component as it save you time. ![Screenshot](../../../img/RegiRide7.png)
+Showing the dialog is just one line of source code.
+
+{% highlight csharp %}
+private void About()
+{
+ NavigationService.Navigate(
+  "/YourLastAboutDialog;component/AboutPage.xaml");
+}
+{% endhighlight %}
+
+The assembly that contains the about dialog wil be loaded only if the user selects to view the about dialog. This will improve the start-up time of your application.
+
+#ListPicker
+
+The listpicker control is used in the create new ride screen to let the user select the start and end address of the ride. The ListPicker is also a control from the Silverlight Toolkit which is comparable to a ComboBox or DropDownList. It shows the selected item and is also able to show a list of items that can be selected.The ListPicker control has two possible ways of selecting an item, first there is the inplace selection and secondly there is a full-screen popup that shows the selectable items. The control automatically switches between them, depending on the number set in the <code>ItemCountThreshold</code> property. The <code>ItemCountThreshold</code> is default set to 5. Be sure to wrap the ListPicker in a stackpanel, this allows the ListPicker to grow when expanding.
+
+![ListPicker to select an address](../../../img/RegiRide8.png)
+
+Both modes have their own templates that you can change. There is the <code>ItemTemplate</code> for the inplace selection and the <code>FullModeItemTemplate</code> for the full-screen variant. Both ListPickers on the Add Ride detail screen use the same collection of addresses.
+{% highlight XML %}
+<phone:PhoneApplicationPage.Resources>
+ <DataTemplate x:Key="ListPickerDataItemTemplate">
+  <toolkit:WrapPanel>
+   <TextBlock TextWrapping="Wrap" Text="{Binding Model.Name}" />
+  </toolkit:WrapPanel>
+ </DataTemplate>
+ <DataTemplate x:Name="PickerFullModeItemTemplate">
+  <StackPanel Orientation="Horizontal" Margin="16 21 0 20">
+   <TextBlock Text="{Binding Model.Name}" Margin="12 0 0 0" FontSize="32" FontFamily="{StaticResource PhoneFontFamilySemiBold}"/>
+  </StackPanel>
+ </DataTemplate>
+</phone:PhoneApplicationPage.Resources>
+{% endhighlight %}
+
+#Conclusion
+
+The application is available in the [marketplace](http://windowsphone.com/s?appid=9fffb384-8d52-46cc-82a4-e05d931920c7) and the full source code can be downloaded from GitHub
+
+#What's next?
+
+I will continue with implementing my next application which will include food, a live tile and integration with a server back-end. If you are interested stay tuned for my next article for yet another complete Windows Phone application. 
