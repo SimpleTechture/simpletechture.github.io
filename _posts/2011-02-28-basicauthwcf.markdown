@@ -6,7 +6,7 @@ tags:
 - Basic Authentication
 ---
 
-[Source on GitHub]()
+[Source on GitHub](https://github.com/kalkie/BasicAuthenticationUsingWCFRest/tree/master)
 
 #Introduction
 
@@ -22,9 +22,9 @@ Basic Authentication is a standard protocol defined within HTTP 1.0 that defines
 
 ![Basic Authentication 1](../../../img/BasicAuthenticationUsingWCFRest_2.png)
 
-![Basic Authentication 2](../../../img/BasicAuthenticationUsingWCFRest_3.png)
+![Basic Authentication 2](../../../img/BasicAuthenticationUsingWCFRest_1.png)
 
-When a user enters the user name and password, the client resends the request but adds **Authorization: Basic SGVsbG8gQmFzZTY0** to the header of the request. The characters after **Basic** are the user name and password, separated by a single colon ":" in a Base64 encoded string. The server decodes the string, extracts the credentials, and validates them against the back-end. When the credentials are correctly validated, the server returns the requested content to the client.
+When a user enters the user name and password, the client resends the request b ut adds **Authorization: Basic SGVsbG8gQmFzZTY0** to the header of the request. The characters after **Basic** are the user name and password, separated by a single colon ":" in a Base64 encoded string. The server decodes the string, extracts the credentials, and validates them against the back-end. When the credentials are correctly validated, the server returns the requested content to the client.
 
 ![Basic Authentication 2](../../../img/BasicAuthenticationUsingWCFRest_3.png)
 
@@ -96,7 +96,10 @@ class MembershipProvider
 }
 {% endhighlight %}
 
+Some code is removed to improve readability.
+
 ##Creating a security context
+
 After we have authenticated the incoming request, we have to create and set the security context. This enables the usage of the client credentials inside a service method. WCF uses the thread local <code>ServiceSecurityContext</code> for this. After the request has been authenticated, a new <code>ServiceSecurityContext</code> is created and added to the incoming request. See the code below from the provided source code that creates a new <code>ServiceSecurityContext</code>.
 
 {% highlight csharp %}
@@ -119,7 +122,10 @@ public string DoWork()
 }
 {% endhighlight %}
 
+The method return a string that contains the name of the identity. 
+
 ##Using the code
+
 If you want to secure your own WCF REST service with Basic Authentication using the provided source code, you need to execute the following steps:
 
 - Add a reference to the BasicAuthenticationUsingWCF assembly
@@ -133,6 +139,4 @@ Although Basic Authentication is a method to secure a web site or service, the a
 
 Basic Authentication in combination with HTTPS is used frequently when you want to offer your service to third parties and provide easy interoperable service. If however you control both side of the wire, client and server, WCF offers a standard security mechanism that can be added to your service using configuration.
 
-This article and source code is based on the example of [Pablo M. Cibraro](http://weblogs.asp.net/cibrax/archive/2009/03/20/custom-basic-authentication-for-restful-services.aspx) who deserves the credits for the solution.
-
-The provided source code is developed using TDD, and uses the [NUnit framework](http://nunit.org/) for creating and executing tests. [http://www.ayende.com/projects/rhino-mocks.aspx](Rhino Mocks) is used as a mocking framework inside the unit tests.
+This article and source code is based on the example of [Pablo M. Cibraro](http://weblogs.asp.net/cibrax/archive/2009/03/20/custom-basic-authentication-for-restful-services.aspx) who deserves the credits for the solution. The provided source code is developed using TDD, and uses the [NUnit framework](http://nunit.org/) for creating and executing tests. [Rhino Mocks](http://www.ayende.com/projects/rhino-mocks.aspx) is used as a mocking framework inside the unit tests.
