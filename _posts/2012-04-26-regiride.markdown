@@ -375,7 +375,10 @@ public IEnumerable<grouping<string,>> GroupedRideViewModels
 
 #YLAD (Your Last About Dialog)
 
-In my [previous application](http://www.codeproject.com/Articles/355127/Blue-Hour) I created the about dialog myself. This time I used the [YLAD](http://ylad.codeplex.com/) component to create an about dialog. This component from Peter Kuhn enables you to easily create an about dialog. It is easily configurable via a XML file. The image below shows the about dialog. It includes a pivot control which includes the version history of your application. I can recommend this component as it save you time. ![Screenshot](../../../img/RegiRide7.png)
+In my [previous application](http://www.codeproject.com/Articles/355127/Blue-Hour) I created the about dialog myself. This time I used the [YLAD](http://ylad.codeplex.com/) component to create an about dialog. This component from Peter Kuhn enables you to easily create an about dialog. It is easily configurable via a XML file. The image below shows the about dialog. It includes a pivot control which includes the version history of your application. I can recommend this component as it save you time. 
+
+![Screenshot](../../../img/RegiRide7.png)
+
 Showing the dialog is just one line of source code.
 
 {% highlight csharp %}
