@@ -6,8 +6,11 @@ tags:
 - App
 ---
 
-![Screenshot 1](../../../img/RegiRide1.jpg)
-![Screenshot 2](../../../img/RegiRide2.png)
+[Source on GitHub](https://github.com/kalkie/RegiRide-WP)
+
+|![Screenshot 1](../../../img/RegiRide1.jpg)|![Screenshot 2](../../../img/RegiRide2.png)|
+
+<br>
 
 #Introduction
 This article describes the implementation and process of developing RegiRide. RegiRide is the second application that I developed for the Window Phone. More information about why I am developing Windows phone applications can be found [here](http://www.codeproject.com/Articles/355127/Blue-Hour). I got a lot of positive reactions from my first [article](http://www.codeproject.com/Articles/355127/Blue-Hour) that made me decide to write a new article and open up the source of this application. I hope that this article will inspire other people to start developing new windows phone applications. I wrote this article during the implementation of the application and finished it just after RegiRide got certified. RegiRide is currently available in the [Marketplace](http://windowsphone.com/s?appid=9fffb384-8d52-46cc-82a4-e05d931920c7).
@@ -87,6 +90,8 @@ public class AddressViewModel : SelectedAddress
  }
 }
 {% endhighlight %}
+
+<br>
 
 #MVVM and MVVM Light
 As already mentioned I switched from [Prism](http://msdn./microsoft.com/en-us/library/gg490766.aspx) to [MVVM](http://mvvmlight.codeplex.com/) Light for this implementation. In this section I describe in more detail how data is retrieved from the database, changed and submitted back to the database. Data that is retrieved from the repository is converted into a view model using a mapper. This all results into for example, the manage addresses screen.
