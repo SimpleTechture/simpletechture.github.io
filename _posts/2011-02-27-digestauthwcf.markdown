@@ -6,7 +6,7 @@ tags:
 - Digest Authentication
 ---
 
-[Source on GitHub](https://github.com/kalkie/BasicAuthenticationUsingWCFRest/tree/master)
+[Source on GitHub](https://github.com/kalkie/DigestAuthenticationUsingWCF)
 
 #Introduction
 
