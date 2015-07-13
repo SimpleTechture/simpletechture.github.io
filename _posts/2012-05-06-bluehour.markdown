@@ -1,105 +1,42 @@
+---
+layout: post
+title: Blue Hour
+tags:
+- Windows Phone
+- App
+- Blue hour
+---
 
+[Source on GitHub](https://github.com/kalkie/BlueHour-WP)
 
-<!DOCTYPE HTML>
-<html>
-<head>
-<title>Article Source</title>
-<link rel="stylesheet" type="text/css" 
-    href="//codeproject.cachefly.net/App_Themes/CodeProject/Css/Main.css?dt=2.8.150707.1" />
-<base href="http://www.codeproject.com/KB/windows-phone-7/" />
-</head>
-<body>
-<!--
-HTML for article "Blue Hour" by Patrick Kalkman
-URL: http://www.codeproject.com/KB/windows-phone-7/355127.aspx
-Copyright 2012 by Patrick Kalkman
-All formatting, additions and alterations Copyright © CodeProject, 1999-2015
--->
+#Introduction
 
+This article describes the implementation and process of developing Blue Hour. Blue Hour is a Window Phone application for calculation the time the sun rises and sets for the next 30 days.
+I love to take pictures using a digital camera. As most photographers know, light is the most important ingredient of a photo. The light during sunrise or sunrise is especially beautiful, making these periods ideal moments to take pictures.
+Blue hour refers to the period of twilight each morning and evening where there is neither full daylight nor complete darkness. The time is considered special because of the quality of the light at this time of day, hence the name of the application Blue Hour
 
+#Background
 
-<p><b>Please choose 'View Source' in your browser to view the HTML, or File | Save to save this 
-file to your hard drive for editing.</b></p>
+During the Techdays 2012 in the Netherlands Microsoft made the attending developers the following offer: If you create three apps for the Windows Phone and these apps get approved into the market place you earn a Nokia Lumia 800. I did not apply directly because I did not know how much time it would take. Two days later I decided to apply for the offer as I like a challenge. After describing my three ideas I got a new Nokia Lumia 800 phone delivered at home. So it was time to create my first Windows Phone App.
+This article is written just after I submitted my first app for the second time to the marketplace. The first time it did not get certified because of reasons I will describe later in the article. As I was planning to develop three applications I took some time to create a proper infrastructure for the development.
 
-<hr class="Divider subdue" />
-<div>
+#Infrastructure and Tools
 
+Windows Phone application are developed using Microsoft Silverlight. I used Visual Studio to implement the application. Visual Studio Express is installed automatically when installing the [Windows Phone SDK](http://www.microsoft.com/download/en/details.aspx?id=27570).
 
+For instruction and documentation on how to create Windows Phone applications I used the excellent tutorial application [TailSpin](http://msdn.microsoft.com/en-us/library/gg490765.aspx) which describes how a team of software developers from Microsoft implemented a Windows phone application. I found it was a real implementation and not your typical demo application. Other resource I used was [video's](http://channel9.msdn.com/Tags/windows+phone) from channel 9 and the [documentation](http://msdn.microsoft.com/en-us/library/ff402535(v=vs.92).aspx) on MSDN.
 
+The following frameworks and patterns were used during the implementing of Blue Hour.
 
-<!-- Start Article -->
-<span id="ArticleContent">
+- Dependency Injection via [Funq](http://funq.codeplex.com/)
+- [MVVM Model View View-Model](http://msdn.microsoft.com/en-us/Video/gg241309) pattern for separation of concern
+- [Prism](http://msdn.microsoft.com/en-us/library/gg490766.aspx) framework for Command binding and global events
+- [Silverlight Toolkit](http://silverlight.codeplex.com/releases/view/75888) for Windows phone for additional controls and animations
+- [Silverlight unit testing](http://www.jeff.wilcox.name/2010/05/sl3-utf-bits/) framework
+- [Mtiks](http://www.mtiks.com) for usage analytics.
 
-
-
-<ul class="download">
-<li><a href="355127/BlueHour_Src.zip">Download source - 2.2 MB</a></li>
-</ul>
-
-<p>
-<img src="355127/BlueHour1.png" alt="SplashScreen Blue Hour" width="240" height="400" />
-<img src="355127/BlueHour2.png" alt="Screenshot Blue Hour" width="240" height="400" />
-</p>
-
-<h2>Contents</h2><ul>
-<li><a href="#Introduction0">Introduction</a></li>
-<li><a href="#Background1">Background</a></li>
-<li><a href="#InfrastructureandTools2">Infrastructure and Tools</a></li>
-<li><a href="#FunctionalityofBlueHour3">Functionality of Blue Hour</a></li>
-<li><a href="#Architecture4">Architecture</a></li>
-<ul>
-<li><a href="#NFunqandMVVM5">NFunq and MVVM</a></li>
-<li><a href="#Prism6">Prism</a></li>
-<li><a href="#UnitTesting7">Unit Testing</a></li>
-<li><a href="#Animation8">Animation</a></li>
-<li><a href="#Navigation9">Navigation</a></li>
-<li><a href="#StoringSettings10">Storing Settings</a></li>
-<li><a href="#LocationServices11">Location Services</a></li>
-<li><a href="#Localization12">Localization</a></li>
-</ul>
-<li><a href="#Marketingofyourapp13">Marketing of your app</a></li>
-<ul>
-<li><a href="#Ratings14">Ratings</a></li>
-<li><a href="#SocialMedia15">Social Media</a></li>
-<li><a href="#Support16">Support</a></li>
-<li><a href="#MoreApps17">More Apps</a></li>
-<li><a href="#MobileAnalytics18">Mobile Analytics</a></li>
-</ul>
-<ul>
-<li><a href="#CertifyApplication19">Certify Application</a></li>
-<li><a href="#Privacypolicy20">Privacy policy</a></li>
-</ul>
-</ul>
-
-<h2><a name="Introduction0">Introduction</a></h2>
-
-<p>This article describes the implementation and process of developing Blue Hour. Blue Hour is a Window Phone application for calculation the time the sun rises and sets for the next 30 days.</p>
-<p>I love to take pictures using a digital camera. As most photographers know, light is the most important ingredient of a photo. The light during sunrise or sunrise is especially beautiful, making these periods ideal moments to take pictures.</p>
-<p>Blue hour refers to the period of twilight each morning and evening where there is neither full daylight nor complete darkness. The time is considered special because of the quality of the light at this time of day, hence the name of the application Blue Hour</p>
-
-<h2><a name="Background1">Background</a></h2>
-
-<p>
-During the Techdays 2012 in the Netherlands Microsoft made the attending developers the following offer: If you create three apps for the Windows Phone and these apps get approved into the market place you earn a Nokia Lumia 800. I did not apply directly because I did not know how much time it would take. Two days later I decided to apply for the offer as I like a challenge. After describing my three ideas I got a new Nokia Lumia 800 phone delivered at home. So it was time to create my first Windows Phone App.</p>
-<p>This article is written just after I submitted my first app for the second time to the marketplace. The first time it did not get certified because of reasons I will describe later in the article. As I was planning to develop three applications I took some time to create a proper infrastructure for the development.</p>
-
-<h2><a name="InfrastructureandTools2">Infrastructure and Tools</a></h2>
-
-<p>Windows Phone application are developed using Microsoft Silverlight. I used Visual Studio to implement the application. Visual Studio Express is installed automatically when installing the <a href="http://www.microsoft.com/download/en/details.aspx?id=27570">Windows Phone SDK</a>.</p>
-
-<p>For instruction and documentation on how to create Windows Phone applications I used the excellent tutorial application <a href="http://msdn.microsoft.com/en-us/library/gg490765.aspx">TailSpin</a> which describes how a team of software developers from Microsoft implemented a Windows phone application. I found it was a real implementation and not your typical demo application. Other resource used where <a href="http://channel9.msdn.com/Tags/windows+phone">video's</a> from channel 9 and the <a href="http://msdn.microsoft.com/en-us/library/ff402535(v=vs.92).aspx">documentation</a> on MSDN.</p>
-<p>The following frameworks and patterns were used during the implementing of Blue Hour.
-	</p><ul>
-		<li>Dependency Injection via <a href="http://funq.codeplex.com/">Funq</a></li>
-		<li><a href="http://msdn.microsoft.com/en-us/Video/gg241309">MVVM Model View View-Model</a> pattern for separation of concern</li>
-		<li><a href="http://msdn.microsoft.com/en-us/library/gg490766.aspx">Prism</a> framework for Command binding and global events</li>
-		<li><a href="http://silverlight.codeplex.com/releases/view/75888">Silverlight Toolkit</a> for Windows phone for additional controls and animations</li>
-		<li>Silverlight unit testing <a href="http://www.jeff.wilcox.name/2010/05/sl3-utf-bits/">framework</a></li>
-		<li><a href="http://www.mtiks.com">Mtiks</a> for usage analytics.</li>
-	</ul>
-
-<h2><a name="FunctionalityofBlueHour3">Functionality of Blue Hour</a></h2>
-<p>As described in the first paragraph Blue Hour calculates the sunrise and sunset times for your current location for the next 30 days. The application detects your location using the Windows Phone location services. I will describe this in more detail later in this article. The calculation of the sunrise and sunset was reused from a source code from a <a href="http://www.codeproject.com/Articles/78486/Solar-Calculator-Calculate-Sunrise-Sunset-and-Maxi">previous application</a>. The source code had to be converted to a Silverlight assembly which was done without any problems.</p>
+#Functionality of Blue Hour
+As described in the first paragraph Blue Hour calculates the sunrise and sunset times for your current location for the next 30 days. The application detects your location using the Windows Phone location services. I will describe this in more detail later in this article. The calculation of the sunrise and sunset was reused from a source code from a <a href="http://www.codeproject.com/Articles/78486/Solar-Calculator-Calculate-Sunrise-Sunset-and-Maxi">previous application</a>. The source code had to be converted to a Silverlight assembly which was done without any problems.</p>
 <p>The application had the following requirements
 	</p><ul>
 		<li>Present the times clearly in a scrollable list box</li>
