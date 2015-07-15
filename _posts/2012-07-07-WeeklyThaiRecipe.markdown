@@ -6,6 +6,8 @@ tags:
 - Apps
 ---
 
+[Source on GitHub](https://github.com/kalkie/WeeklyThaiRecipe-WP)
+
 |![Splash Screen](../../../img/WeekylThaiRecipeSplash.jpg)|![ScreenShot](../../../img/WeeklyThaiScreenshot.jpg)|
   
 #Introduction
@@ -49,17 +51,17 @@ The application on the windows phone that receives and shows the recipes consist
 First, there is the view which consist of the Windows Phone panorama control. The application uses the MVVM pattern to separate views from the logic. To assist in using the MVVM pattern the [MVVM Light](http://mvvmlight.codeplex.com) framework is used.
 Secondly there are a set of services that allow the viewmodel or model to retrieve data from the local storage or from an external source. To assist in retrieving data from external sources such as the recipe web service the [RestSharp](http://restsharp.org/) library for Window Phone is used. And last there is the local recipe storage layer which is responsible for retrieving and storing local recipe data. The recipe's are stored in the isolated storage of the phone in XML format.
 
-##Two different scenarios
+#Two different scenarios
 These layers assist in two different types of scenario (connected and disconnected) that are supported by the application.
 
-###1. Disconnected scenario
+##1. Disconnected scenario
 When the phone has (temporary) no network connection, the application will not receive any recipes from the external recipe webservice. Therefore, the application has a set of 3 recipes which are distributed together with the application. When a user does not have a network connection, the application is still able to show the list of the three fixed recipe's. The application checks to see if there is a network connection available and if there is none it receives the recipes from the local XML file. Whether the application has a network connection or not is abstracted by the services layer. The view just calls GetRecipes and receives them. 
 
-###2. Connected scenario
+##2. Connected scenario
 If the phone has a network connection the viewmodel instructs the service to retrieve the recipes. The service layer detects that there is a network connection and send a request to the recipe webservice to check if the latest recipe is already retrieved or not. If not it retrieves the latest recipe, stores it onto the isolated storage of the phone and returns the three fixes recipes and the dynamic recipes to the view.
 By designing the application this way, it doesn't have to retrieve the recipes everytime from the webservice. Instead, if it has the latest recipe, it just returns the recipes from the local storage. After the development of the application I also notices that there are other frameworks that provide these kind of (caching) services. For example, [AgFx](https://github.com/shawnburke/AgFx) that provides this functionality. I will be looking at integrating this framework in the next version of the application.
 
-##View (Panorama control)
+#View (Panorama control)
 The panorama control is a control that provide parallax scolling which can be used to provide a digital magazine look and feel. Normally the control has a solid background. But for my app I wanted to do something different. I found [an article by Jeff Wilcox](http://www.jeff.wilcox.name/2010/11/wp7-panorama-smooth-background-changing/) that describes a way to smoothly fade the background of the panorama control. I decided to use this method and use a timer that rotates the background image of the panorama control. 
 
 <iframe width="420" height="315" src="https://www.youtube.com/embed/fe_r7UyB1aw" frameborder="0" allowfullscreen></iframe>
@@ -194,7 +196,7 @@ The toast notification XML message has  two text strings, one that indicates the
 
 ![Central Screenshot](../../../img/CentralScreenShot1.jpg)
 
-#Tile notifications
+##Tile notifications
 
 The class <code>TileSender</code> is responsible for sending Tile notifications to the phones. It works the same as the NotificationSender but a different XML message is send to the phones.
 
@@ -248,7 +250,9 @@ public void Send(
 ##Sending the push notification XML message
 
 The MessageSender class is responsible for sending the bytes of the XML message to the server. The "X-WindowsPhone-Target" and the "X-NotificationClass" headers are added to Http request to indicates the type of notification and when the notification should be send to the phone.
-<pre>public void Send(Uri uri, byte[] message, NotificationType notificationType)
+
+{% highlight csharp %}
+public void Send(Uri uri, byte[] message, NotificationType notificationType)
 {
   var request = (HttpWebRequest)WebRequest.Create(uri);
   request.Method = WebRequestMethods.Http.Post;
@@ -298,11 +302,15 @@ The MessageSender class is responsible for sending the bytes of the XML message 
     throw ex;
   }
 }
-</pre>
+{% endhighlight %}
+
 Weekly Thai Recipe uses two types of push notifications, toast and tile. The third type, raw notifications is not used. Raw notifications can be used to send custom data to your windows phone application. Note, that if your application is not running the raw notification is discarded.
-<h3><a name="Communicationfromtheviewtotheservice14">Communication from the view to the service</a></h3>
+
+##Communication from the view to the service
+
 Communication from the view to the service is implemented using jQuery. The service is implemented using an WEB API controller.
-<pre>[Authorize]
+{% highlight csharp %}
+[Authorize]
 public class ToastController : ApiController
 {
   private readonly ISubscriptionRepository subscriptionRepository;
@@ -330,10 +338,13 @@ public class ToastController : ApiController
          HttpStatusCode.InternalServerError);
     }
   }
-}</pre>
-The ToastController is responsible for receiving the Toast send request. It contains a title and a message that should be send to all the registered phones. 
-A javascript class is used to actually send the message to the controller. The inialize methods binds a method to the blick event of the sendToastButton. The method retrieves the value from the title and message text field and sends them to the controller using the $.ajax jQuery method. When the method succeeds it shows an alert that the toast has been send.
-<pre lang="javascript">var toastInitializer = function () {
+}
+{% endhighlight %}
+
+The ToastController is responsible for receiving the Toast send request. It contains a title and a message that should be send to all the registered phones. A javascript class is used to actually send the message to the controller. The inialize methods binds a method to the blick event of the sendToastButton. The method retrieves the value from the title and message text field and sends them to the controller using the $.ajax jQuery method. When the method succeeds it shows an alert that the toast has been send.
+
+{% highlight javascript %}
+var toastInitializer = function () {
 
   var initialize = function (sendToastUrl) {
 
@@ -363,9 +374,11 @@ A javascript class is used to actually send the message to the controller. The i
     initialize: initialize
   };
 };
-</pre>
+{% endhighlight %}
 Error handling on the client is  centralized by overriding the jQuery $.ajax error method. 
-<pre>var generalErrorHandler = function() {
+
+{% highlight javascript %}
+var generalErrorHandler = function() {
 
   var initialize = function() {
     $.ajaxSetup({
@@ -387,10 +400,11 @@ Error handling on the client is  centralized by overriding the jQuery $.ajax err
     initialize: initialize
   };
 };
-</pre> 
-An error div is added to the shared ASP.NET MVC _Layout.cshtml
-  that shows the actual error 
-<pre><body>
+{% endhighlight %}
+
+An error div is added to the shared ASP.NET MVC _Layout.cshtml that shows the actual error. 
+{% highlight html %}
+<body>
   <div id="errorDialog" class="errorDialog" style="display: none">
     <div id="errorIcon" class="errorIcon" style="cursor: pointer;" ><!-- --></div>
     <div class="messageText">
@@ -399,9 +413,12 @@ An error div is added to the shared ASP.NET MVC _Layout.cshtml
   </div>
   @this.RenderBody()
 </body>
-</pre>
+{% endhighlight %}
+
 The general error handler and all the necessary javascript classes are initialized in the  $(document).ready method of the main view.
-<pre>$(document).ready(function () {
+
+{% highlight javascript %}
+$(document).ready(function () {
 
   var errorHandler = new generalErrorHandler();
   errorHandler.initialize();
@@ -416,53 +433,41 @@ The general error handler and all the necessary javascript classes are initializ
   recipe.initalize('@Url.Action("Save", "api/Recipe")');
 
 });
-</pre>
-<h3><a name="DapperDataAccess15">Dapper Data Access</a></h3>
+{% endhighlight %}
+
+#Dapper Data Access
 I used Dapper for data access because using a full ORM such as Entity Framework or NHibernate is just too much for managing those two or three database tables. Dapper is what is called a micro orm. It provides a subset of the services provided by a full ORM. This enables you to have more power and control over how records are stored and retrieved from the database.
-Dapper provides   functionality to parameterize queries and materialize the results from those queries. For example, the following source code is used to retrieve all the registered phones (subscriptions) from the database.
-<pre>IEnumerable<subscription> subscriptions = connection.Query<subscription>(@"select PhoneId, Uri from subscription");
-</subscription></subscription></pre>
+Dapper provides functionality to parameterize queries and materialize the results from those queries. For example, the following source code is used to retrieve all the registered phones (subscriptions) from the database.
+
+{% highlight csharp %}
+IEnumerable<subscription> subscriptions = connection.Query<subscription>(@"select PhoneId, Uri from subscription");
+{% endhighlight %}
+
 Dapper takes care of performing the query and creating a list of subscription instances filled with the data from the database. The mapping between the table columns and the property of the class is based on the name of the column and the name of the property. These two column name and property name should be the same for Dapper to recognize this.
-<h2><a name="Toolsandframeworks16">Tools and frameworks</a></h2>
-Below the list of tools and frameworks I used for developing Weekly Thai Recipe.
-Windows Phone Application
 
+#Tools and frameworks
 
-<ul>
-<li><a href="http://mvvmlight.codeplex.com/">MVVM Light</a>
-</li><li><a href="http://silverlight.codeplex.com/">Silverlight Toolkit</a>
-</li><li><a href="http://www.mtiks.com/">Mtiks</a>
-</li><li><a href="http://mvvmlight.codeplex.com/">SimpleIoc</a></li>
-<li><a href="http://restsharp.org/">RestSharp</a></li>
-</ul>
-Central Management Application
-<ul>
-  <li><a href="http://www.asp.net/mvc/mvc4">ASP.NET MVC4 (Beta)</a></li>
-  <li><a href="http://docs.structuremap.net/">StructureMap</a></li>
-  <li><a href="http://code.google.com/p/elmah/">Elmah</a></li>
-  <li><a href="http://code.google.com/p/dapper-dot-net/">Dapper</a></li>
-</ul>
+Below the list of tools and frameworks I used for developing Weekly Thai Recipe. 
+
+##Windows Phone Application
+
+- [MVVM Light](http://mvvmlight.codeplex.com/)
+- [Silverlight Toolkit](http://silverlight.codeplex.com/)
+- [MTiks](http://www.mtiks.com/)
+- [SimpleIoc](http://mvvmlight.codeplex.com/)
+- [RestSharp](http://restsharp.org/)
+
+##Central Management Application
+
+- [ASP.NET MVC4 (Beta)](http://www.asp.net/mvc/mvc4)
+- [StructureMap](http://docs.structuremap.net/)
+- [Elmah](http://code.google.com/p/elmah/)
+- [Dapper](http://code.google.com/p/dapper-dot-net/)
 
 #Using the source
 
-There a two solutions inside the source package. For opening the Windows Phone solution you need Visual Studio 2010 and the <a href="http://www.microsoft.com/en-us/download/details.aspx?id=27570">Windows Phone SDK</a> installed. For opening the central recipe management solution you need to install <a href="http://www.asp.net/mvc/mvc4">ASP.NET MVC4 (beta)</a>.There is a detached SQL server database in the source package which you can attach to your local SQL server to create a fully working application. If you use this database can login with username Codeproject and password Codeproject.&nbsp;
-<h2><a name="Conclusion18">Conclusion</a></h2>
-The application is available in the <a href="http://windowsphone.com/s?appid=9fffb384-8d52-46cc-82a4-e05d931920c7">marketplace</a> and the full source code can be downloaded from the top of the article. If you like the article, a vote or comment is appreciated. Thanks.
-<h2><a name="What'snext19">What's next?</a></h2>
-My next Window Phone project will be a game using the XNA framework. I am still figuring out the details, but it will appear here on CodeProject in the form of a  article.
-<h2><a name="History20">History</a></h2>
-<ul>
-  <li>v1.0 First version</li><li>v1.1 Update of the source of the central application to use the RC of ASP.NET MVC4 (Thanks to Jeff Albrecht for the headsup!)&nbsp;</li><li>v1.2 Added a detached database to the source zip to create a complete package.&nbsp;&nbsp;&nbsp;</li>
-</ul>
+There a two solutions inside the source package. For opening the Windows Phone solution you need Visual Studio 2010 and the [Windows Phone SDK](http://www.microsoft.com/en-us/download/details.aspx?id=27570) installed. For opening the central recipe management solution you need to install [ASP.NET MVC4 (beta)](http://www.asp.net/mvc/mvc4). There is a detached SQL server database in the source package which you can attach to your local SQL server to create a fully working application. If you use this database can login with username Codeproject and password Codeproject.
 
+#Conclusion
 
-
-</span>
-<!-- End Article -->
-
-
-
-
-</div> 
-</body>
-</html>
+The application is available in the [marketplace](http://windowsphone.com/s?appid=9fffb384-8d52-46cc-82a4-e05d931920c7) and the source code can be downloaded from [GitHub](https://github.com/kalkie/WeeklyThaiRecipe-WP). 
