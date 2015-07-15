@@ -61,8 +61,6 @@ public class CultureMessageInspector :
   ...
 {% endhighlight %}
 
-The rest of the class is omitted.
-
 #Custom Behaviour
 
 The custom behaviour is created like this:
@@ -85,8 +83,6 @@ public class CultureBehaviour : IEndpointBehavior
   ...
 {% endhighlight %}
 
-The rest of the class is omitted.
-
 #Creating the Service Host
 
 When creating the <code>ServiceHost</code>, the custom behaviour is added to the behaviours collection of the <code>ServiceEndPoint</code>. This could also be configured in the configuration file.
@@ -101,8 +97,6 @@ ServiceEndpoint endPoint =
 endPoint.Behaviors.Add(new CultureBehaviour());
 {% endhighlight %}
 
-The rest of the class is omitted.
-
 #Creating the Client Channel
 
 When creating the client channel, the custom behaviour is also added to the behaviours collection of the <code>ServiceEndPoint</code>. This could also be configured in the configuration file.
@@ -116,8 +110,6 @@ ChannelFactory<ihelloworld /> factory = new ChannelFactory<ihelloworld />(tcpEnd
 factory.Endpoint.Behaviors.Add(new CultureBehaviour());
 return factory.CreateChannel();
 {% endhighlight %}
-
-The rest of the class is omitted.
 
 #Points of Interest
 

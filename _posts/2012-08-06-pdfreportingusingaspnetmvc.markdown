@@ -126,7 +126,7 @@ The last step is to convert the byte array into an instance of the <code>BinaryC
 
 The class <code>PdfViewController</code> is the class that combines these classes. The method <code>ViewPdf</code> uses all the three previously mentioned classes to generate the PDF as shown in the code below:
 
-{% highlight aspx-cs %}
+{% highlight csharp %}
 protected ActionResult ViewPdf(string pageTitle, string viewName, object model)
 {
     // Render the view html to a string.
@@ -152,7 +152,7 @@ iTextsharp supports colors out of the box; in the demo application, the backgrou
 One thing that I needed with my project that was not supported by the HTML conversion in iTextSharp was functionality to force a page break. Most of the time, with reporting, you need to be able to force a page break, for example, if you want a graph to start always on a new page. The way I solved this was to add support for it to iTextSharp. As it is Open-Source, you are able to add new features to it. I added support for a non-existing HTML tag called <code><np /></code>  which forces iTextSharp to create a new page. I created a patch so that it could be committed to the <a href="http://sourceforge.net/tracker/?func=detail&amp;aid=3396638&amp;group_id=72954&amp;atid=536238">iTextSharp project</a>.I do not know if it will be included in the main trunk of the project as it feels somewhat strange to invent new HTML tags just to support a page break. But if you need it, you can use the patch to compile iTextSharp with new page support.
     
 ##Images
-It is possible to add images to the report by using an <code><img src="" /></code> tag. I had no success with dynamically generated images. So I generate the images that I needed before the action conversion process takes place. A single static image can be seen in the report.
+It is possible to add images to the report by using an <code>&lt;img src="" /&gt;</code> tag. I had no success with dynamically generated images. So I generate the images that I needed before the action conversion process takes place. A single static image can be seen in the report.
     
 ##ASP.NET support
 It should be possible to use the same kind of solution using older versions of ASP.NET MVC. However, I have not tried it.
