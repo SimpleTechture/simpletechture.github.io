@@ -6,6 +6,8 @@ tags:
 - App
 ---
 
+Source on [Github](https://github.com/kalkie/Androng-Android)
+
 |![Screenshot 1](../../../img/Screenshot_Androng_1.png)|![Screenshot 2](../../../img/Screenshot_Androng_2.png)|
 
 #Introduction
@@ -32,7 +34,7 @@ I used the community edition of IntelliJ, which is free. This is because during 
 
 When you start developing games on Android, you have three possible graphics implementations. You can use the drawable package and use a <code>view</code> or a <code>canvas</code>. On the other hand, you can use the [OpenGL ES](http://www.khronos.org/opengles/) API that is a special implementation of the [OpenGL](http://www.opengl.org/) specification for embedded devices. OpenGL ES includes support for 3D graphics. For Androng, I decided to use the graphics package and draw using a <code>canvas</code>. The canvas package is fast enough to support the animation and movement needed for this game.
 
-#>Activities
+#Activities
 
 An Android application revolves around Activities and Views. An activity is a part of the application that provides a screen to interact with. An application can consist of multiple activities. Android starts the activity specified in the manifest of an application. This manifest is important, it is a configuration file that specifies the information the system needs before it can start your application. For example, which permissions are necessary for the application to run. When starting, Android calls the <code>onCreate</code> method of the specified activity. The source code below shows the main activity of Androng. All activities should derive from the <code>Activity</code> class.
 
@@ -58,7 +60,7 @@ public class AndrongActivity extends Activity
 
 A view creates the user interface of an activity and derives from the <code>View</code> class. A total view can consist of view groups and views. View groups are used to group views. They follow the Composite design pattern. The user interface of an application can consist of multiple views, a so-called hierarchy of views. You can use code or a resource file to define the layout of a view. The flexibility of your user interface increases by using a resource layout file. It becomes easier to maintain and include support for localisation. The layout resource file is implemented using XML. The resource file below shows the layout of Androng:
 
-{% highlight xml linenos %}
+{% highlight xml %}
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
@@ -214,15 +216,16 @@ The result, the variable <code>timeNeededToDrawFrame</code>, is sent to all the 
 
 Most, if not all games need collision detection. There are many ways of detecting if two game objects collide. Androng combines both the bounding box and the pixel methods.
 
-<h3><a name="Boundingboxhitdetection9"></a>Bounding box hits detection</h3>
+#Bounding box hits detection
 
 The bounding box method can be easily illustrated with the following picture:
 
-<img width="200" height="150" alt="Bounding box method" src="Androng/Bounding_Box_Hit_Detection.png" complete="true" />
+![Bounding box method](../../../img/Bounding_Box_Hit_Detection.png)
 
 The following algorithm detects if the virtual boxes around each sprite overlap:
 
-<pre lang="java">if (bottom1 < top2)
+{% highlight java %}
+  if (bottom1 < top2)
   return false;
 if (top1 > bottom2)
   return false;
@@ -231,111 +234,88 @@ if (right1 < left2)
 if (left1 > right2)
   return false;
 
-//bounding box do overlap</pre>
+//bounding box do overlap
+{% endhighlight %}
 
 The bounding box collision detection algorithm is a fast way to detect a collision, but if the shapes are not rectangular such as the ball, we could get false positives. For example, in the following situation, the bounding box detection would detect a collision while in fact there isn't one.
 
-<img width="200" height="130" alt="False detection when using bounding box method" src="Androng/Bounding_Box_Hit_Detection_False_Positive.png" complete="true" />
+![False detection when using bounding box method](../../../img/Bounding_Box_Hit_Detection_False_Positive.png)
 
-<h3><a name="PixelPerfectDetection10"></a>Pixel perfect detection</h3>
+#Pixel perfect detection
 
 We could solve this by using a bounding circle for the ball, but I wanted to solve this using a more generic approach, using the pixels of the sprite. Therefore, when the bounding box algorithm detects a collision, we scan the overlap in both sprites for pixels. If the same location in both sprites contains a pixel (color != 0), we have a collision.
 
-<img width="260" height="176" alt="Collision detection using pixel scan" src="Androng/Pixel_Detection.png" complete="true" />
+![Collision detection using pixel scan](../../../img/Pixel_Detection.png)
 
 The algorithm determines the width and height of the overlapping box and where in each sprite the box is. The algorithm scans each pixel in the box for a collision. Reading the pixel from the bitmap is possible by calling the <code>getBitmap()</code> method on the Drawable. See the method <code>collideswith</code> of the sprite class in the source code for the full collision detection routine.
 
-<h2><a name="SoundManagement11"></a>Sound management</h2>
+#Sound management
 
-Androng plays a sound whenever the ball collides with a paddle, the wall, or when a player scores. Playing a sound using Android is easy. The media player or Sound Pool classes can play sounds. I used the Sound Pool classes because they offer more flexibility. Playing sounds using the Sound Pool classes involves the AudioManager; the AudioManager is a so called Android system service. The source code below shows how to get the AudioManager system service and play the media file "hit". Hit is played when the ball hits a paddle or the side.
+Androng plays a sound whenever the ball collides with a paddle, the wall, or when a player scores. Playing a sound using Android is easy. The media player or Sound Pool classes can play sounds. I used the Sound Pool classes because they offer more flexibility. Playing sounds using the Sound Pool classes involves the udioManager; the AudioManager is a so called Android system service. The source code below shows how to get the AudioManager system service and play the media file "hit". Hit is played when the ball hits a paddle or the side.
 
-<pre lang="java">AudioManager mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
+{% highlight java %}
+AudioManager mAudioManager = (AudioManager) mContext.getSystemService(Context.AUDIO_SERVICE);
 SoundPool mSoundPool = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
-mSoundPool.play(R.raw.hit, streamVolume, streamVolume, 1, 0, 1);</pre>
+mSoundPool.play(R.raw.hit, streamVolume, streamVolume, 1, 0, 1);
+{% endhighlight %}
 
-All the sounds of the game are pre-loaded into a <code>SoundPoolMap</code> and are played from this <code>SoundPoolMap</code>. All sound management methods are grouped into a single class <code>SoundManager</code>; see the source code for the class. The class is based on an example provided by <a title="Android Development Blog" href="http://www.droidnova.com/creating-sound-effects-in-android-part-1,570.html">Stephen Flockton</a>, who writes a blog around Android development.
+All the sounds of the game are pre-loaded into a <code>SoundPoolMap</code> and are played from this <code>SoundPoolMap</code>. All sound management methods are grouped into a single class <code>SoundManager</code>; see the source code for the class. The class is based on an example provided by [Stephen Flockton](http://www.droidnova.com/creating-sound-effects-in-android-part-1,570.html), who writes a blog around Android development.
 
-<h2><a name="InputManagement12"></a>Input management</h2>
+#Input management
 
 The game can be controlled using the touch screen of an Android device, this is called the touch mode. The touch mode is activated if you touch a button on the screen with your finger. Handling touch mode events is as simple as overriding the <code>onTouchEvent</code> of the SurfaceView. The signature of <code>onTouchEvent</code> is shown below:
 
-<pre lang="java">public boolean onTouchEvent(MotionEvent event)</pre>
+{% highlight java %}
+public boolean onTouchEvent(MotionEvent event)
+{% endhighlight %}
 
 This event gets thrown when you touch the screen with one or more fingers. The <code>MotionEvent</code> argument has a method called <code>getPointerCount()</code>, which returns the number of fingers that are placed on the screen. Although, this actually depends on the capability of the device and the version of Android. Androng has a two player mode where two players can play against each other using their fingers on the same device. In this mode, the <code>getPointerCount()</code> method is used. If there are two fingers touching the screen of the device, <code>index = 0</code> represents the first finger, while <code>index = 1</code> represents the second finger. Using the index in the method <code>getX()</code> or <code>getY()</code> on the event, the position of the fingers can be determined.
 
-<pre lang="java">float xPosition1 = event.getX(pointerIndex);
-float yPosition1 = event.getY(pointerIndex);</pre>
+{% highlight java %}
+float xPosition1 = event.getX(pointerIndex);
+float yPosition1 = event.getY(pointerIndex);
+{% endhighlight %}
 
 <code>xPosition1</code> and <code>yPosition1</code> are used to place the paddle on the screen.
 
-<h2><a name="Notifications13"></a>Notifications</h2>
+#Notifications
 
 Androng uses Toast notifications to tell the user about certain events such as how to start the game and which player has won the game. A toast notification is a message that pops up on the surface of the window. The message automatically fades in and out and stays on the screen for a predetermined amount of time. The following code places a toast notification on the Androng game screen.
 
-<pre lang="java">Toast toast = Toast.makeText(context, "Select Menu for a new game.", Toast.LENGTH_LONG);
-toast.show();</pre>
+{% highlight java %}
+Toast toast = Toast.makeText(context, "Select Menu for a new game.", Toast.LENGTH_LONG);
+toast.show();
+{% endhighlight %}
 
-<img width="254" height="156" title="Toast" alt="Showing a Toast notification" src="Androng/Toast.png" complete="true" />
+![Showing a Toast notification](../../../img/Toast.png)
 
 The constant <code>Toast.LENGTH_LONG</code>, according to the Android documentation, will say to Android that the text notification should be shown for a long period. The default, <code>Toast.LENGHT_LONG</code>, corresponds to 3.5s. <code>Show()</code> will actually show the text on the screen.
 
-<h2><a name="ApplicationLifeCycleManagement14"></a>Application life cycle management</h2>
+#Application life cycle management
 
 As Android is an Operating System for mobile devices, it needs special attention for managing the scarce resources of such a device. Each Android application runs in its own process and is able to perform a specific task. A task can consists of multiple activities. Each Android application should manage the Application lifecycle. For example, it is possible that the Android OS decides to suspend or destroy your application when it needs extra resources. Therefore, your application should be able to save and restore its state when this is needed.
 
-<h2><a name="ActivityLifeCycle15"></a>Activity life cycle</h2>
+#Activity life cycle
 
 As mentioned before, an Android application consists of activities; it is in these activities you should manage your application's lifecycle. There are three possible scenarios possible for starting or restarting your application.
 
-<table class="ArticleTable">
-<thead>
-<tr>
-<td>Fresh Start</td>
+|**Fresh Start**|**Fresh Restart**|**Restart From Pause**|
+|onCreate|onRestart||
+|onStart|onStart||
+|onResume|onResume|onResume|
 
-<td>Fresh Restart</td>
-
-<td>Restart From Pause</td>
-</tr>
-</thead>
-
-<tbody>
-<tr>
-<td><code>onCreate</code></td>
-
-<td><code>onRestart</code></td>
-
-<td>&nbsp;</td>
-</tr>
-
-<tr>
-<td><code>onStart</code></td>
-
-<td><code>onStart</code></td>
-
-<td>&nbsp;</td>
-</tr>
-
-<tr>
-<td><code>onResume</code></td>
-
-<td><code>onResume</code></td>
-
-<td><code>onResume</code></td>
-</tr>
-</tbody>
-</table>
-
-All these "on*" methods are part of an activity. The Fresh Start scenario happens when you normally start your application. The Fresh Restart scenario happens after Android has stopped your activity, just before it starts again. The last scenario, Restart From Pause, happens when the system is about to start resuming a previous activity. When another application gets to the foreground, your activity gets paused. <a title="Activity Lifecycle" href="http://developer.android.com/reference/android/app/Activity.html">This</a> show a total graphical overview of the application life-cycle.
+All these "on*" methods are part of an activity. The Fresh Start scenario happens when you normally start your application. The Fresh Restart scenario happens after Android has stopped your activity, just before it starts again. The last scenario, Restart From Pause, happens when the system is about to start resuming a previous activity. When another application gets to the foreground, your activity gets paused. [This](http://developer.android.com/reference/android/app/Activity.html) shows a total graphical overview of the application life-cycle.
 
 Note that when you change the orientation of an Android device, your application gets restarted.
 
 For the first version of Androng, I decided not to save the state of the game when the game is destroyed by the Android Operating System. When the game is paused and restarts, I simply restart the Androng game thread.
 
-<h2><a name="RestartThread16"></a>Restart thread</h2>
+#Restart thread
 
 Drawing of the game screen and physics calculation runs on a separate thread. This <code>AndrongThread</code> derives from <code>Thread</code>.
 
-<pre lang="java">public class AndrongThread extends Thread
+{% highlight java %}
+public class AndrongThread extends Thread
 {  
   @Override
   public void run()
@@ -348,11 +328,13 @@ Drawing of the game screen and physics calculation runs on a separate thread. Th
   }
   
   ...
-}</pre>
+}
+{% endhighlight %}
 
 The thread runs continuously in a loop guarded by a single <code>boolean isRunning</code>. When the program stops, the <code>isRunning</code> boolean gets set to <code>false</code> and the thread stops running. In the method <code>surfaceDestroyed</code> that gets called by the Android OS, I wait using a <code>Join()</code> statement.
 
-<pre lang="java">public void surfaceDestroyed(SurfaceHolder surfaceHolder)
+{% highlight java %}
+public void surfaceDestroyed(SurfaceHolder surfaceHolder)
 {
   androngThread.setRunning(false);
   boolean retry = true;
@@ -367,7 +349,8 @@ The thread runs continuously in a loop guarded by a single <code>boolean isRunni
     {
     }
   }
-}</pre>
+}
+{% endhighlight %}
 
 The method sets the boolean <code>isRunning</code> to false using the <code>setRunning</code> method, this stops the thread from running. Next, the code calls <code>androngThread.join()</code> which according to the documentation blocks the current thread until the receiver finishes its execution and <strong>dies</strong>.
 
@@ -375,7 +358,8 @@ Exactly the behavior I was looking for. However, during a restart or resume of t
 
 The code below shows my solution; it is not elegant, but works.
 
-<pre lang="java">public void surfaceCreated(SurfaceHolder surfaceHolder)
+{% highlight java %}
+public void surfaceCreated(SurfaceHolder surfaceHolder)
 {
   androngThread.setRunning(true);
   try
@@ -388,45 +372,36 @@ The code below shows my solution; it is not elegant, but works.
     androngThread.start();
     androngThread.setRunning(true);
   }
-}</pre>
+}
+{% endhighlight %}
 
 The method tries to start the thread; when it fails, the exception handler creates a new thread and starts the newly created thread.
 
-<h2><a name="AndroidMarket17"></a>Android Market</h2>
+#Android Market
 
-I wanted to publish Androng on the Android Market. Android Market is an open distribution platform for Android applications. Open means that your applications are not policed and there is no approval process. The visibility of your application depends on the rating you get from customers.
-
-Android Market is not the only distribution platform for Android applications; another publication channel is Amazon. Currently, the Amazon market is only open to customers from the United States.
+I wanted to publish Androng on the Android Market. Android Market is an open distribution platform for Android applications. Open means that your applications are not policed and there is no approval process. The visibility of your application depends on the rating you get from customers. Android Market is not the only distribution platform for Android applications; another publication channel is Amazon. Currently, the Amazon market is only open to customers from the United States.
 
 There is a one time $25 registration fee before you can publish your games on the Android Market. Besides that, for every app sold on the Android Market, Google receives a 30% fee. Which to my opinion is reasonable compared with other publication channels. The image below shows the publisher screen for Androng. Androng is free and can be downloaded from the Android Market.
 
-<img width="600" height="332" alt="Publish your application on Android market" src="Androng/Publish_Android_Market.png" complete="true" />
+![Publish your application on Android market](../../../img/Publish_Android_Market.png)
 
-The community edition of IntelliJ gives you the opportunity to package the application. Before you publish your application, you must sign the application using a public private key combination. Updates of the application must use the same key for signing. This package with the <em>.apk</em> extension can be published on the Android Market. You have to fill in some fields before publishing, such as the description and some screenshots, logo's etc. If you have an Android phone, you can download the game <a title="Androng market download link" href="https://market.android.com/details?id=net.semantic.games&amp;feature=search_result">here via Android market</a>.
+The community edition of IntelliJ gives you the opportunity to package the application. Before you publish your application, you must sign the application using a public private key combination. Updates of the application must use the same key for signing. This package with the <em>.apk</em> extension can be published on the Android Market. You have to fill in some fields before publishing, such as the description and some screenshots, logo's etc. If you have an Android phone, you can download the game [here via Android market](https://market.android.com/details?id=net.semantic.games&amp;feature=search_result).
 
 The nice thing about Android market is that you get insight into the users of your application. It shows if the users get any errors, which Android versions they use, and the type of devices they have. For example, the screenshot below shows the type of devices that have downloaded Androng.
 
-<img width="600" height="305" alt="Which phones run your application" src="Androng/Insight_Phones.png" complete="true" />
+![Which phones run your application](../../../img/Insight_Phones.png)
 
-<h2><a name="SourceCode18"></a>Source code</h2>
+#Source code
 
-<a href="Androng/Androng_src.zip">Here is the source code of the game</a>; if you use the community edition of IntelliJ, you can open the project file. Otherwise, you can open the individual source or Java files.
+The source code of Androng is available on [Github](https://github.com/kalkie/Androng-Android). If you use the community edition of IntelliJ, you can open the project file. Otherwise, you can open the individual source or Java files.
 
-<h2><a name="Nextversion19"></a>Next version</h2>
+#Next version
 
 For the next version of Androng, I have the following features planned, in no particular order.
 
-<ul>
-<li>Usage of a real physics engine such as <a title="Open source physics engine" href="http://www.box2d.org/">Box2d</a> or <a title="Android Physics Engine" href="http://www.andengine.org/">AndEngine</a></li>
-
-<li>High score list, with central storage on the web</li>
-
-<li>Usage of <a href="http://code.google.com/p/google-guice/">Google-guice</a> for dependency injection</li>
-
-<li>Increased freedom of movement of the bats</li>
-
-<li>Support for Android version 1.6</li>
-
-<li>Creation of a promotion video</li>
-</ul>
-
+- Usage of a real physics engine such as [Box2d](http://www.box2d.org/) or [AndEngine](http://www.andengine.org/)
+- High score list, with central storage on the web
+- Usage of [Google-guice](http://code.google.com/p/google-guice/) for dependency injection
+- Increased freedom of movement of the bats
+- Support for Android version 1.6
+- Creation of a promotion video
