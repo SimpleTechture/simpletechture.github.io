@@ -2,8 +2,7 @@
 layout: post
 title: Open Device Lab
 tags:
-- marketing
-- apps
+- App Development
 ---
 
 I recently visited an Open Device Lab to test my [Windows 8 app](http://apps.microsoft.com/windows/app/telling-time/a32502e1-5a7d-426d-9194-7946d13cd406  "Telling Time for Windows 8"). The goal of an ODL is to improve the web & app experience both for developers and consumers. ODL is an initiative from [Open Device Labs](http://www.opendevicelab.com/ "Open Device Labs website") in which community pools of internet connected devices are shared for testing purposes. So you can go to an open device lab and test your website or app for free. **Isn't that amazing?** 

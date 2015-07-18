@@ -5,7 +5,6 @@ tags:
 - Docker
 - Scaling
 - Nginx
-- Ghost
 ---
 
 Finally, we have all the parts in place to start talking about scaling this Blog using containers. The configuration we are going to create looks like this.

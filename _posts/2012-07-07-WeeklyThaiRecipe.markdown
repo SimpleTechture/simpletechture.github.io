@@ -3,7 +3,7 @@ layout: post
 title: Weekly Thai Recipe
 tags:
 - Windows Phone
-- Apps
+- App Development
 ---
 
 [Source on GitHub](https://github.com/kalkie/WeeklyThaiRecipe-WP)

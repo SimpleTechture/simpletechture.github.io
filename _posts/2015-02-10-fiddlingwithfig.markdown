@@ -4,7 +4,6 @@ title: Fiddling with Fig
 tags:
 - Docker
 - Fig
-- Containers
 ---
 
 Although we are currently only using two containers, the command to boot both containers is quite long. Before introducing the third data only container, I want to simplify starting and stopping our containers.

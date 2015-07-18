@@ -3,7 +3,7 @@ layout: post
 title: Digest Authentication using WCF
 tags:
 - WCF
-- Digest Authentication
+- Security
 ---
 
 [Source on GitHub](https://github.com/kalkie/DigestAuthenticationUsingWCF)

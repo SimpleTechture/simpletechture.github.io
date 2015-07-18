@@ -2,7 +2,6 @@
 layout: post
 title: Improve your Software Architecture
 tags:
-- Architecture
 - Software Architecture
 ---
 

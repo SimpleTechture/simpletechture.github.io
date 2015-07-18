@@ -3,8 +3,7 @@ layout: post
 title: Improving traceability of distributed systems
 tags:
 - ElasticSearch
-- ELK Stack
-- Microservices
+- Micro Services
 ---
 
 This post, is an article which I wrote for the SDN magazine. I decided to also publish it on this blog. It is about distributed systems, micro service architectures and traceability within such a distributed system. 

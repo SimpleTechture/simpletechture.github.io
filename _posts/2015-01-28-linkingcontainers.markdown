@@ -3,8 +3,6 @@ layout: post
 title: Linking Docker containers
 tags:
 - Docker
-- Linking
-- Containers
 ---
 
 If you remember from my previous post, this is my current setup.

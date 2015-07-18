@@ -2,8 +2,7 @@
 layout: post
 title: Naming your app
 tags:
-- marketing
-- apps
+- App Development
 ---
 
 I like to develop Windows and Windows Phone apps. In the last couple of years I have developed quite a few as you can see [here](http://www.windowsphone.com/en-US/store/publishers?publisherId=Patrick%2BKalkman "Windows 8 Apps") and [here](http://windows.microsoft.com/en-us/windows/search#q=Patrick%20Kalkman&s=Store "Windows Phone Apps").

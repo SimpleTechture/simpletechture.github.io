@@ -3,8 +3,7 @@ layout: post
 title: Blue Hour
 tags:
 - Windows Phone
-- App
-- Blue hour
+- App Development
 ---
 
 [Source on GitHub](https://github.com/kalkie/BlueHour-WP)

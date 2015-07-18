@@ -3,7 +3,7 @@ layout: post
 title: SOLID principles workshop
 tags:
 - SOLID
-- Design principles
+- OO Design
 ---
 
 Recently two colleagues and I did a workshop in which we explained <strong>SOLID</strong> Software development. <strong>SOLID</strong> is an acronym that stand for five principles for object-oriented development. SOLID stands for:

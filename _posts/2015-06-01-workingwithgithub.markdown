@@ -2,9 +2,9 @@
 layout: post
 title: Working with Git(Hub)
 tags:
-- source control
-- git
-- github
+- Source Control
+- Git
+- GitHub
 ---
 
 This article describes two possible development workflows called Git-Flow and GitHub-Flow. Git-Flow is a more strict development workflow based on the concept of releases, GitHub-Flow is a lightweight development workflow especially suited for continuous deployment. At this moment Git-Flow aligns best with how we develop projects and perform maintenance for clients. Therefore,  we standardized on using Git-Flow for projects.

@@ -3,7 +3,6 @@ layout: post
 title: PDF reporting using ASP.NET MVC
 tags:
 - ASP.NET MVC
-- PDF
 - Reporting
 ---
 

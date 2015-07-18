@@ -3,7 +3,6 @@ layout: post
 title: Dynamically Generated WCF Proxy
 tags:
 - WCF
-- Proxy
 ---
 
 #Introduction

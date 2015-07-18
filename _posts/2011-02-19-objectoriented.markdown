@@ -2,8 +2,7 @@
 layout: post
 title: 19 1/2 Things to Make You a Better Object Oriented Programmer
 tags:
-- Object Oriented Programming
-- OreDev
+- Object Oriented Design
 ---
 
 #Introduction
