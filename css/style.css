@@ -218,11 +218,22 @@ h4 + p {
 .header-image {
   width: 100px;
   margin-bottom: 15px;
+  padding:1px;
+  border:solid;
+  border-color: #dddddd #aaaaaa #aaaaaa #dddddd;
+  border-width: 1px 2px 2px 1px;
+  background-color:white;
+
 }
 
 .header-image-contact {
   width: 100px;
   margin-bottom: -15px;
+    padding:1px;
+  border:solid;
+  border-color: #dddddd #aaaaaa #aaaaaa #dddddd;
+  border-width: 1px 2px 2px 1px;
+  background-color:white;
 }
 
 .ascd-image {
