@@ -20,4 +20,3 @@ The video below shows me performing the [String Calculator code kata](http://osh
 The music is from [Rob Costlow](https://www.jamendo.com/en/artist/125/rob-costlow-contemporary-piano)
 
 Another way to improve you skills is using using [CodeWars](https://www.codewars.com/) which is a site that hosts several code katas which you can perform online. The site collects statistics and rewards. 
- 
