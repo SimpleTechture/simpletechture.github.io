@@ -220,6 +220,11 @@ h4 + p {
   margin-bottom: 15px;
 }
 
+.header-image-contact {
+  width: 100px;
+  margin-bottom: -15px;
+}
+
 .ascd-image {
   width: 275px;
   margin-left: 20px;
