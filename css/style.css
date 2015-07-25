@@ -214,6 +214,23 @@ h4 + p {
 .section-header {
 	margin-bottom: 15px;
 }
+
+.header-image {
+  width: 100px;
+  margin-bottom: 15px;
+}
+
+.ascd-image {
+  width: 275px;
+  margin-left: 20px;
+  margin-top: 20px;
+  padding:8px;
+  border:solid;
+  border-color: #dddddd #aaaaaa #aaaaaa #dddddd;
+  border-width: 1px 2px 2px 1px;
+  background-color:white;
+}
+
 .section-title, h3.section-title {
 	font-size: 18px;
 	line-height: 24px;
