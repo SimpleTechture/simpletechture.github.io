@@ -1,0 +1,47 @@
+---
+layout: default
+title: Contact
+overview: true
+---
+
+<article class="main-content">
+
+  <div class="wrapper clearfix">
+
+    <section class="page-content clearfix">
+
+      <header class="section-header">
+        <h3 class="section-title">Contact</h3>
+      </header>
+
+      <form class="cd-form floating-labels" action="http://formspree.io/info@simpletechture.nl" method="POST">
+        <fieldset>
+          <img class="header-image-contact" src="../img/foto_klein.jpg" />
+          <div>
+            Need support regarding an app or website? Fill the form below and I will contact you as soon as possible.
+          </div>
+
+          <div class="icon">
+            <label class="cd-label" for="cd-name">Naam (verplicht)</label>
+            <input class="user" type="text" name="name" id="cd-name" required>
+          </div>
+
+          <div class="icon">
+            <label class="cd-label" for="cd-name">Email (verplicht)</label>
+            <input class="user" type="email" name="_replyto" id="cd-email" required>
+          </div>
+
+          <div class="icon">
+            <label class="cd-label" for="cd-textarea">Bericht (verplicht)</label>
+            <textarea class="message" name="body" id="cd-textarea" required></textarea>
+          </div>
+
+          <div>
+            <input type="hidden" name="_next" value="//www.simpletechture.nl/contact/thanks-en.html" />
+            <input type="submit" value="Verstuur">
+          </div>
+        </fieldset>
+      </form>
+    </section>
+
+</article>
