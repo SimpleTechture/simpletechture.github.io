@@ -3,4 +3,4 @@ base: http://www.simpletechture.nl
 name: SimpleTechture
 author: Patrick Kalkman
 
-highlighter: pygments
+highlighter: rouge
